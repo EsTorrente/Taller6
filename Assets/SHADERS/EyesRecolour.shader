@@ -479,6 +479,15 @@
                 // ADDITIONAL LIGHTS
                 // =================================================
 
+                
+                InputData inputData = (InputData)0;
+
+                inputData.positionWS = IN.positionWS;
+                inputData.normalWS = normalWS;
+                inputData.viewDirectionWS = IN.viewDirectionWS;
+                inputData.normalizedScreenSpaceUV =
+                    GetNormalizedScreenSpaceUV(IN.positionCS);
+
                 #if defined(_ADDITIONAL_LIGHTS)
 
                     // -------------------------------------------------
