@@ -21,10 +21,10 @@ MonoBehaviour:
     m_Value: {x: 0.5, y: 0.5}
   intensity:
     m_OverrideState: 1
-    m_Value: 0.383
+    m_Value: 0.442
   smoothness:
     m_OverrideState: 1
-    m_Value: 0.2
+    m_Value: 0.284
   rounded:
     m_OverrideState: 1
     m_Value: 0
@@ -100,6 +100,115 @@ MonoBehaviour:
   gain:
     m_OverrideState: 1
     m_Value: {x: 1, y: 1, z: 1, w: 0}
+--- !u!114 &-6575308078041450998
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3579a2f2bd173c44ba70c2634c2fcff5, type: 3}
+  m_Name: PainterlyVolume
+  m_EditorClassIdentifier: Assembly-CSharp::PainterlyVolume
+  active: 1
+  questMode:
+    m_OverrideState: 0
+    m_Value: 0
+  intensity:
+    m_OverrideState: 1
+    m_Value: 0.622
+  resolution:
+    m_OverrideState: 1
+    m_Value: 1
+  scaleWithResolution:
+    m_OverrideState: 1
+    m_Value: 1
+  referenceHeight:
+    m_OverrideState: 1
+    m_Value: 3216.7
+  strokeStrength:
+    m_OverrideState: 1
+    m_Value: 0.304
+  strokeSize:
+    m_OverrideState: 1
+    m_Value: 818.2
+  strokeStamp:
+    m_OverrideState: 1
+    m_Value: 1
+  strokeElongation:
+    m_OverrideState: 1
+    m_Value: 4
+  strokeFlowFollow:
+    m_OverrideState: 0
+    m_Value: 1
+  pigmentContrast:
+    m_OverrideState: 1
+    m_Value: 1.272
+  strokeEdgeDarkening:
+    m_OverrideState: 1
+    m_Value: 0
+  hueVariation:
+    m_OverrideState: 1
+    m_Value: 9.7
+  saturationVariation:
+    m_OverrideState: 1
+    m_Value: 0.45
+  valueVariation:
+    m_OverrideState: 1
+    m_Value: 0.09
+  bleed:
+    m_OverrideState: 1
+    m_Value: 0.313
+  bleedStep:
+    m_OverrideState: 0
+    m_Value: 1.5
+  bleedAngle:
+    m_OverrideState: 0
+    m_Value: 207.4
+  shadowPaint:
+    m_OverrideState: 0
+    m_Value: 0.8
+  shadowAdditionalLights:
+    m_OverrideState: 0
+    m_Value: 2
+  shadowWobble:
+    m_OverrideState: 0
+    m_Value: 14
+  shadowSoftness:
+    m_OverrideState: 0
+    m_Value: 0.12
+  shadowAmbient:
+    m_OverrideState: 0
+    m_Value: 0.35
+  shadowDarken:
+    m_OverrideState: 0
+    m_Value: 0.15
+  shadowTint:
+    m_OverrideState: 0
+    m_Value: {r: 0.82, g: 0.88, b: 1, a: 1}
+  shadowEdge:
+    m_OverrideState: 0
+    m_Value: 0.35
+  edgeDarkening:
+    m_OverrideState: 1
+    m_Value: 0.147
+  edgeSensitivity:
+    m_OverrideState: 1
+    m_Value: 20
+  canvasStrength:
+    m_OverrideState: 1
+    m_Value: 0.728
+  canvasSize:
+    m_OverrideState: 1
+    m_Value: 685.7
+  canvasMidpoint:
+    m_OverrideState: 0
+    m_Value: 0.72
+  animationSpeed:
+    m_OverrideState: 0
+    m_Value: 0
 --- !u!114 &-3189107510728355014
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -152,7 +261,7 @@ MonoBehaviour:
     m_Value: 1
   intensity:
     m_OverrideState: 1
-    m_Value: 0.594
+    m_Value: 0.253
   response:
     m_OverrideState: 1
     m_Value: 0.8
@@ -237,6 +346,115 @@ MonoBehaviour:
   maxNits:
     m_OverrideState: 1
     m_Value: 1000
+--- !u!114 &-1146958739000258886
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3579a2f2bd173c44ba70c2634c2fcff5, type: 3}
+  m_Name: PainterlyVolume
+  m_EditorClassIdentifier: Assembly-CSharp::PainterlyVolume
+  active: 1
+  questMode:
+    m_OverrideState: 1
+    m_Value: 0
+  intensity:
+    m_OverrideState: 1
+    m_Value: 0.235
+  resolution:
+    m_OverrideState: 1
+    m_Value: 1
+  scaleWithResolution:
+    m_OverrideState: 1
+    m_Value: 1
+  referenceHeight:
+    m_OverrideState: 1
+    m_Value: 1080
+  strokeStrength:
+    m_OverrideState: 1
+    m_Value: 0.761
+  strokeSize:
+    m_OverrideState: 1
+    m_Value: 212.9
+  strokeStamp:
+    m_OverrideState: 1
+    m_Value: 1
+  strokeElongation:
+    m_OverrideState: 1
+    m_Value: 1
+  strokeFlowFollow:
+    m_OverrideState: 1
+    m_Value: 0
+  pigmentContrast:
+    m_OverrideState: 1
+    m_Value: 0.48
+  strokeEdgeDarkening:
+    m_OverrideState: 1
+    m_Value: 0
+  hueVariation:
+    m_OverrideState: 1
+    m_Value: 34
+  saturationVariation:
+    m_OverrideState: 1
+    m_Value: 0.1
+  valueVariation:
+    m_OverrideState: 1
+    m_Value: 0.186
+  bleed:
+    m_OverrideState: 1
+    m_Value: 0
+  bleedStep:
+    m_OverrideState: 1
+    m_Value: 0
+  bleedAngle:
+    m_OverrideState: 1
+    m_Value: 0
+  shadowPaint:
+    m_OverrideState: 1
+    m_Value: 1
+  shadowAdditionalLights:
+    m_OverrideState: 1
+    m_Value: 3
+  shadowWobble:
+    m_OverrideState: 1
+    m_Value: 57.8
+  shadowSoftness:
+    m_OverrideState: 1
+    m_Value: 0.489
+  shadowAmbient:
+    m_OverrideState: 1
+    m_Value: 0.395
+  shadowDarken:
+    m_OverrideState: 1
+    m_Value: 0.15
+  shadowTint:
+    m_OverrideState: 1
+    m_Value: {r: 0.82, g: 0.88, b: 1, a: 1}
+  shadowEdge:
+    m_OverrideState: 1
+    m_Value: 0.35
+  edgeDarkening:
+    m_OverrideState: 1
+    m_Value: 0.25
+  edgeSensitivity:
+    m_OverrideState: 1
+    m_Value: 4
+  canvasStrength:
+    m_OverrideState: 1
+    m_Value: 0
+  canvasSize:
+    m_OverrideState: 1
+    m_Value: 1266
+  canvasMidpoint:
+    m_OverrideState: 1
+    m_Value: 0.72
+  animationSpeed:
+    m_OverrideState: 1
+    m_Value: 1.4
 --- !u!114 &-1132612335549358440
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -342,6 +560,7 @@ MonoBehaviour:
   - {fileID: 8504555511653790219}
   - {fileID: 990652752090815164}
   - {fileID: 896969342200598900}
+  - {fileID: -1146958739000258886}
 --- !u!114 &896969342200598900
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -425,7 +644,7 @@ MonoBehaviour:
   active: 1
   intensity:
     m_OverrideState: 1
-    m_Value: 0.051
+    m_Value: 0.083
 --- !u!114 &5175991862876350615
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -438,7 +657,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c01700fd266d6914ababb731e09af2eb, type: 3}
   m_Name: DepthOfField
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.DepthOfField
-  active: 0
+  active: 1
   mode:
     m_OverrideState: 1
     m_Value: 0

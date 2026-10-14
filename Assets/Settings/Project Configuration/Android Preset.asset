@@ -69,20 +69,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PainterlyFeature
   m_Active: 1
   shader: {fileID: 4800000, guid: 24e0828bdbb68644c9c939116f22a450, type: 3}
-  settings:
-    injectionPoint: 600
-    brushTexture: {fileID: 2800000, guid: 468b8945f867ceb4c9e5339e0014c64d, type: 3}
-    strokeScale: 0.1
-    strokeStrength: 0.15
-    strokeAngle: 3.62
-    washIntensity: 0.295
-    edgeDarkening: 1
-    animateSpeed: 2.14
-    colorBleed: 1
-    canvasTexture: {fileID: 2800000, guid: a1c13b9e41170434dbfad9b14be1218e, type: 3}
-    canvasScale: 11.04
-    canvasStrength: 0.394
-    nearWeight: 0.347
-    farWeight: 0.728
-    fadeStart: 0.23
-    fadeEnd: 6.4
+  brushTexture: {fileID: 2800000, guid: 468b8945f867ceb4c9e5339e0014c64d, type: 3}
+  atlasColumns: 6
+  atlasRows: 6
+  canvasTexture: {fileID: 2800000, guid: 6594e0fa0852df045bcbe476e7a1f64a, type: 3}
+  injectionPoint: 600
+  applyInSceneView: 0
