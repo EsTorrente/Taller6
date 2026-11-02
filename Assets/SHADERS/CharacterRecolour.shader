@@ -62,6 +62,28 @@
             "Rim Light Color Influence",
             Range(0,1)
         ) = 1
+
+        [Enum(Main Light, 0, Custom Light, 1)]
+        _RimLightSource ("Rim Light Source", Float) = 0
+
+        _RimShadowMask ("Rim Hidden By Cast Shadows", Range(0,1)) = 1
+
+        _RimThreshold ("Rim Threshold", Range(0,1)) = 0.194
+
+        _RimSoftness ("Rim Softness", Range(0,0.5)) = 0
+
+        _RimWobble ("Rim Edge Wobble", Range(0,1)) = 0.25
+
+        _RimNoiseScale ("Rim Noise Scale", Float) = 498.2
+
+        _RimBoilSpeed ("Rim Boil Speed", Range(0,10)) = 4.11
+
+        [Toggle] _RimBoilStepped ("Stepped Boil (hand-drawn)", Float) = 1
+
+        [Enum(View Edge Dark Side, 0, Light Band At Shadow Edge, 1, Lit Edge Facing The Light, 2)]
+        _RimMode ("Rim Type", Float) = 2
+
+        _RimLightOffset ("Light Edge Position (- dark side, + lit side)", Range(-1,1)) = 0
     }
 
 
@@ -141,6 +163,8 @@
                 float3 viewDirectionWS : TEXCOORD4;
 
                 float4 shadowCoord : TEXCOORD5;
+
+                float3 positionOS : TEXCOORD6;
             };
 
 
@@ -153,6 +177,11 @@
 
             TEXTURE2D(_MaskMap);
             SAMPLER(sampler_MaskMap);
+
+
+            // Set globally by PainterlyRimLight.cs (not per material)
+            float4 _PainterlyRimLightPos;
+            float4 _PainterlyRimLightColor;
 
 
             // =====================================================
@@ -187,7 +216,87 @@
 
                 float _RimLightInfluence;
 
+                float _RimLightSource;
+                float _RimShadowMask;
+
+                float _RimThreshold;
+                float _RimSoftness;
+                float _RimWobble;
+                float _RimNoiseScale;
+                float _RimBoilSpeed;
+                float _RimBoilStepped;
+
+                float _RimMode;
+                float _RimLightOffset;
+
             CBUFFER_END
+
+
+            // =====================================================
+            // PROCEDURAL NOISE (object space, for the boiling rim edge)
+            // =====================================================
+
+            float Hash13(float3 p)
+            {
+                p = frac(p * 0.1031);
+                p += dot(p, p.zyx + 31.32);
+                return frac((p.x + p.y) * p.z);
+            }
+
+            float VNoise(float3 p)
+            {
+                float3 i = floor(p);
+                float3 f = frac(p);
+                f = f * f * (3.0 - 2.0 * f);
+
+                float a = lerp(lerp(Hash13(i),                 Hash13(i + float3(1,0,0)), f.x),
+                               lerp(Hash13(i + float3(0,1,0)), Hash13(i + float3(1,1,0)), f.x), f.y);
+
+                float b = lerp(lerp(Hash13(i + float3(0,0,1)), Hash13(i + float3(1,0,1)), f.x),
+                               lerp(Hash13(i + float3(0,1,1)), Hash13(i + float3(1,1,1)), f.x), f.y);
+
+                return lerp(a, b, f.z);
+            }
+
+            float FBM(float3 p)
+            {
+                float v = 0.0;
+                float a = 0.5;
+
+                [unroll]
+                for (int k = 0; k < 3; k++)
+                {
+                    v += a * VNoise(p);
+                    p = p * 2.03 + 17.1;
+                    a *= 0.5;
+                }
+
+                return v / 0.875;
+            }
+
+            // A new noise pattern per keyframe (integer part of t),
+            // cross-faded smoothly, or snapped when Stepped Boil is on.
+            float3 KeyOffset(float k)
+            {
+                return float3(
+                    Hash13(float3(k, 1.7, 3.1)),
+                    Hash13(float3(k, 5.3, 9.2)),
+                    Hash13(float3(k, 2.9, 7.7))
+                ) * 53.0;
+            }
+
+            float FBMT(float3 p, float t)
+            {
+                float k = floor(t);
+                float a = FBM(p + KeyOffset(k));
+
+                if (_RimBoilStepped > 0.5)
+                    return a;
+
+                float b = FBM(p + KeyOffset(k + 1.0));
+
+                return lerp(a, b, smoothstep(0.0, 1.0, frac(t)));
+            }
 
 
             // =====================================================
@@ -207,6 +316,8 @@
                 OUT.positionCS = positionInputs.positionCS;
 
                 OUT.positionWS = positionInputs.positionWS;
+
+                OUT.positionOS = IN.positionOS.xyz;
 
 
                 // World normal
@@ -560,12 +671,32 @@
                     );
 
 
-                // Main light influence on rim
+                // Which light drives the rim: the main light,
+                // or the Light picked with the PainterlyRimLight component
+                half3 rimLightDirection = mainLightDirection;
+                half3 rimLightColor = mainLight.color;
+                half rimCastShadow = mainLight.shadowAttenuation;
+
+                if (_RimLightSource > 0.5)
+                {
+                    // w = 0: directional (xyz = direction toward the light)
+                    // w = 1: point/spot (xyz = position)
+                    float3 toLight =
+                        _PainterlyRimLightPos.xyz -
+                        IN.positionWS * _PainterlyRimLightPos.w;
+
+                    rimLightDirection = normalize(toLight + 1e-5);
+                    rimLightColor = _PainterlyRimLightColor.rgb;
+                    rimCastShadow = 1.0;   // the custom light has no shadow map here
+                }
+
+
+                // Light influence on rim
                 half rimLightFacing =
                     saturate(
                         dot(
                             normalWS,
-                            mainLightDirection
+                            rimLightDirection
                         )
                     );
 
@@ -579,11 +710,81 @@
                 rim *= rimFromLight;
 
 
+                // Light Edge: a band around where the surface turns away from the light.
+                // Depends only on the light and the surface, never on the camera.
+                if (_RimMode > 1.5)
+                {
+                    // Lit Edge: outline glow, only on the side of the object that faces the light.
+                    // "Light Edge Position" sets how far into the lit side it starts.
+                    half litSide =
+                        smoothstep(
+                            _RimLightOffset - 0.1,
+                            _RimLightOffset + 0.3,
+                            dot(normalWS, rimLightDirection)
+                        );
+
+                    rim =
+                        pow(
+                            max(
+                                1.0 - saturate(dot(normalWS, viewDirection)),
+                                1e-4
+                            ),
+                            _RimPower
+                        ) * litSide;
+                }
+                else if (_RimMode > 0.5)
+                {
+                    half band =
+                        saturate(
+                            1.0 -
+                            abs(
+                                dot(normalWS, rimLightDirection) -
+                                _RimLightOffset
+                            )
+                        );
+
+                    rim = pow(band, _RimPower);
+                }
+
+
+                // Painterly band: threshold + softness, with a ragged edge
+                // that wobbles (boils) over time
+                float rimNoise =
+                    _RimWobble > 0.001
+                    ? FBMT(
+                        IN.positionOS * _RimNoiseScale,
+                        _Time.y * _RimBoilSpeed
+                    )
+                    : 0.5;
+
+                float rimSoft = max(_RimSoftness, 0.001);
+
+                rim =
+                    smoothstep(
+                        _RimThreshold - rimSoft,
+                        _RimThreshold + rimSoft,
+                        rim + (rimNoise - 0.5) * _RimWobble
+                    );
+
+
+                // Hide the rim where another object's shadow covers a surface that faces the light
+                // (surfaces turned away from the light keep their rim)
+                rim *= lerp(
+                    1.0,
+                    rimCastShadow,
+                    smoothstep(
+                        0.0,
+                        0.3,
+                        dot(normalWS, rimLightDirection)
+                    ) * _RimShadowMask
+                );
+
+
                 // Use main light colour
                 half3 finalRimColor =
                     lerp(
                         _RimColor.rgb,
-                        _RimColor.rgb * mainLight.color,
+                        _RimColor.rgb * rimLightColor,
                         _RimLightInfluence
                     );
 
