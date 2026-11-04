@@ -63,7 +63,7 @@ Material:
     - _Speed_Noise: 150
     - _Speed_Wave: 0.01
     m_Colors:
-    - _Deep_Water_Color: {r: 0.36552152, g: 0.6981132, b: 0.61496526, a: 0}
-    - _Shallow_Water_Color: {r: 0.16078433, g: 0.23801784, b: 0.8784314, a: 0}
+    - _Deep_Water_Color: {r: 0, g: 0, b: 0, a: 0}
+    - _Shallow_Water_Color: {r: 0.009300464, g: 0.027873654, b: 0.1792453, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
