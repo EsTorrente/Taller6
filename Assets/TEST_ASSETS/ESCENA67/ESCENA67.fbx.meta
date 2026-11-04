@@ -1,0 +1,458 @@
+fileFormatVersion: 2
+guid: be72dd04ffa44894485283e00406ef30
+ModelImporter:
+  serializedVersion: 24501
+  internalIDToNameTable: []
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 1930s Art-Deco Tabletop Globe Base
+    second: {fileID: 2100000, guid: b90cc0205ee410e4d8385543b51ba07b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 1930s Art-Deco Tabletop Globe Sphere
+    second: {fileID: 2100000, guid: e5be968a3c619b9478e61f532c9fa88d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Black rocks
+    second: {fileID: 2100000, guid: 34de7c2d4a005684da853d2ff422f472, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BlackHole
+    second: {fileID: 2100000, guid: 6c6eebb7b8937ec4498c0f2c2cd10642, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BlackHole2
+    second: {fileID: 2100000, guid: c7c0c0677489ae449a4d51cd4add7dac, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Column_3
+    second: {fileID: 2100000, guid: aee9a79aa6e1b7e45881c70a8669a7a9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Disc
+    second: {fileID: 2100000, guid: 6c11b0a90ce22ad4283e6146124042d4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Fabric.004
+    second: {fileID: 2100000, guid: b3be07465429452499ea5e4313f76f90, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Horizon_Ocean
+    second: {fileID: 2100000, guid: eede789bdd276ac4e9d6fbaceab60823, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Kid_Magic_Apuntando
+    second: {fileID: 2100000, guid: 669c2d3ca965e124888f7730c997f00f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Kid_Magic_Sorprendido
+    second: {fileID: 2100000, guid: 669c2d3ca965e124888f7730c997f00f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Light Wood.004
+    second: {fileID: 2100000, guid: 3bbd97c87d2bcc34196f5782b3b75ae7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: LightFigure_Magic
+    second: {fileID: 2100000, guid: 9558623de1882284d9bdb4aa2843cb17, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.001
+    second: {fileID: 2100000, guid: a70d1f0bd8e43f44a91557d5067450d2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.002
+    second: {fileID: 2100000, guid: 5fd3a87790469f24194374c5ff722821, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.004
+    second: {fileID: 2100000, guid: f95c33967fe9f25419e0b0112cb3e8de, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Metal
+    second: {fileID: 2100000, guid: 0e6cf8814149ecf48ac4be4f428d3d73, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Metaliczna Farba.scaled
+    second: {fileID: 2100000, guid: c5487b51c50f66a4a9e441a2a0971db0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "Plastik_Bia\u0142y"
+    second: {fileID: 2100000, guid: 9ef2ce5958ab4124192491a3cc8c64bc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Ring_Planetary
+    second: {fileID: 2100000, guid: bf41d41d7080aa848ba8b0752ebe7551, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: bark
+    second: {fileID: 2100000, guid: 6737f8ef476c21544b3978a29b362126, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: base and candles
+    second: {fileID: 2100000, guid: 3591a37201bb6fd42a9bcd9a7c53647f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: leaf autumn
+    second: {fileID: 2100000, guid: 92326f4d0dfc32642b9a159aceab756e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: organ
+    second: {fileID: 2100000, guid: 042d5236485a20540afd1fff5d5e817d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: uculele_old.002
+    second: {fileID: 2100000, guid: d15b29b1bfd420f4f81383cc7d008b65, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: 1930s Art-Deco Tabletop Globe Mount_AlbedoTransparency
+    second: {fileID: 2800000, guid: d3a9ca86e13fe9840a99e8232bf7da8b, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: 1930s Art-Deco Tabletop Globe Mount_Metallic
+    second: {fileID: 2800000, guid: 818fe8b582e9be94091e94a8c1fca014, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: 1930s Art-Deco Tabletop Globe Mount_Normal
+    second: {fileID: 2800000, guid: afe1c0b6458e4f24f9e3f1556cbb92c5, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: 1930s Art-Deco Tabletop Globe Mount_Roughness
+    second: {fileID: 2800000, guid: 7d4471e63f0738a4e96634c302a4b7b1, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: 1930s Art-Deco Tabletop Globe Sphere_AlbedoTransparency
+    second: {fileID: 2800000, guid: d958d3ca7904dac48ab43bcceeb1760c, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: 1930s Art-Deco Tabletop Globe Sphere_Metallic
+    second: {fileID: 2800000, guid: 461092ffe157572499e4c5bb15087730, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: 1930s Art-Deco Tabletop Globe Sphere_Normal
+    second: {fileID: 2800000, guid: f89b81a1c5a74bb419502b29f26c775e, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: 1930s Art-Deco Tabletop Globe Sphere_Roughness
+    second: {fileID: 2800000, guid: c5069c832e740bf44bfd3d7200b91d22, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Bark001_diffuse
+    second: {fileID: 2800000, guid: 2647d07f9d198b44a83f4143b7bb0678, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Bark001_normal
+    second: {fileID: 2800000, guid: 084606a7f4ea5494ab589e4ced85b9ce, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Bark001_roughness
+    second: {fileID: 2800000, guid: b4bd4cfc2289e364bbd1bbac12f0ba7e, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Fabric039_1K-JPG_Color
+    second: {fileID: 2800000, guid: bf97c65ab3c66bc4abbf5a3b00723556, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Fabric039_1K-JPG_NormalGL
+    second: {fileID: 2800000, guid: 6f2295a192cd24649b1770be3332f33a, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Fabric039_1K-JPG_Roughness
+    second: {fileID: 2800000, guid: 98c418d562e154a468d7aedf68aa6d04, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Material_Base_color_1001
+    second: {fileID: 2800000, guid: 281fa94cf8596e24f8c2a7a3a0bff5a3, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Material_Base_metalness_1001
+    second: {fileID: 2800000, guid: a641c90126b91dd409607fd4a4c6c08d, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Material_Normal_1001
+    second: {fileID: 2800000, guid: b45ea464426f6ee4fa7d4bef0c580d7a, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Material_Specular_roughness_1001
+    second: {fileID: 2800000, guid: 10a1bc8731d989742b2ea6e888bef8da, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Material_Specular_roughness_1001000
+    second: {fileID: 2800000, guid: 9b7008ada8426bd4c862191cc8706311, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Metal12_col
+    second: {fileID: 2800000, guid: 75d8bebee2c4e1e49b8bbf47d523514a, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Metal12_col000
+    second: {fileID: 2800000, guid: ad4e49b74df28d5408b6f2aef9cb9a2b, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Metal12_nrm
+    second: {fileID: 2800000, guid: 1be1243f863302e43948f5217e89d4a6, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Metal12_rgh
+    second: {fileID: 2800000, guid: ad4976ea62164e344ad0ba597026bf6a, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: TD_Checker_BaseColor
+    second: {fileID: 2800000, guid: 66219ce8f5ba902428680d54586ffb08, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: TD_Checker_Metallic
+    second: {fileID: 2800000, guid: 5e3d2e8ca671663489d7461619f4058f, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: TD_Checker_Normal
+    second: {fileID: 2800000, guid: e0faba89a71c79648979a265dea794ad, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: TD_Checker_Roughness
+    second: {fileID: 2800000, guid: 5bde99702d6129a46aba4aa96d09011b, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wood095_1K-JPG_Color
+    second: {fileID: 2800000, guid: 910143815a16de54e9b12cc2f51aeb2b, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wood095_1K-JPG_NormalGL
+    second: {fileID: 2800000, guid: 34e75c68959c1744f8c704529635a5d2, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wood095_1K-JPG_Roughness
+    second: {fileID: 2800000, guid: 83ff8d0cbe104ab44b12d7f2417f023b, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: low_organ_BaseColor
+    second: {fileID: 2800000, guid: 0da1537f9f294b74f96a1819a11ad113, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: low_organ_BaseColor_1
+    second: {fileID: 2800000, guid: f88958549f7f6ea419eea916129d784d, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: low_organ_Normal
+    second: {fileID: 2800000, guid: bf1271e67ce0ab141b1ae8e2e10be597, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: low_organ_Normal_3
+    second: {fileID: 2800000, guid: dbeeb0dd44e3b05428bbab4f13825125, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: rocks08_diffuse
+    second: {fileID: 2800000, guid: 94213c28d82b6844f8d773d384147c43, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: rocks08_normal_opengl
+    second: {fileID: 2800000, guid: 9a3fb6cd0d5838e40a0d53e49f9828b5, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: rocks08_roughness
+    second: {fileID: 2800000, guid: 5fb72b2e6b6d3ba4fa998d67412c0caf, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: rocks08_specular
+    second: {fileID: 2800000, guid: 7065ffa73b5921f44b85944af2c19362, type: 3}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+    searchTexturesGlobally: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: ESCENA67
+      takeName: Scene
+      internalID: -623603649343465320
+      firstFrame: 1
+      lastFrame: 1727
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 0
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    generateMeshLods: 0
+    meshLodGenerationFlags: 0
+    maximumMeshLod: -1
+    importUVs: -1
+    importVertexColors: 1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    strictVertexDataChecks: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+    calculateBlendshapeNormalsDeltaFromImportedNormals: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 1
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
