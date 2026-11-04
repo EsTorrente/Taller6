@@ -138,9 +138,9 @@ Material:
     - _EnvironmentReflections: 1
     - _EyeStrength: 0.923
     - _FootRimMask: 1
-    - _FootShadowEnd: 0.5
+    - _FootShadowEnd: 0.79
     - _FootShadowSpace: 0
-    - _FootShadowStart: -0.17
+    - _FootShadowStart: 0.57
     - _FootShadowStrength: 0.684
     - _GlossMapScale: 1
     - _Glossiness: 0.53877544
