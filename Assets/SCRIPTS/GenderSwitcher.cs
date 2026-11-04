@@ -2,54 +2,61 @@ using UnityEngine;
 
 public class GenderSwitcher : MonoBehaviour
 {
-    [Header("ASTRONAUT")]
-    [Tooltip("Meshes that should be ON when Astronaut Male is selected.")]
-    public GameObject[] astronautMaleMeshes;
+    // These lists hold the mesh RENDERERS (MeshRenderer / SkinnedMeshRenderer), not GameObjects.
+    // Turning a renderer on or off hides the mesh without deactivating anything in the FBX prefab,
+    // so bones, animators and the rest of the hierarchy keep working.
+    // Tip: you can drag a mesh GameObject from the hierarchy straight into a slot;
+    // Unity picks its renderer automatically.
 
-    [Tooltip("Meshes that should be ON when Astronaut Female is selected.")]
-    public GameObject[] astronautFemaleMeshes;
+    [Header("ASTRONAUT")]
+    [Tooltip("Mesh renderers that should be ON when Astronaut Male is selected.")]
+    public Renderer[] astronautMaleMeshes;
+
+    [Tooltip("Mesh renderers that should be ON when Astronaut Female is selected.")]
+    public Renderer[] astronautFemaleMeshes;
 
 
     [Header("KID")]
-    [Tooltip("Meshes that should be ON when Kid Male is selected.")]
-    public GameObject[] kidMaleMeshes;
+    [Tooltip("Mesh renderers that should be ON when Kid Male is selected.")]
+    public Renderer[] kidMaleMeshes;
 
-    [Tooltip("Meshes that should be ON when Kid Female is selected.")]
-    public GameObject[] kidFemaleMeshes;
+    [Tooltip("Mesh renderers that should be ON when Kid Female is selected.")]
+    public Renderer[] kidFemaleMeshes;
 
 
     // Called by the MALE button
     public void SelectMale()
     {
-        SetMeshesActive(astronautMaleMeshes, true);
-        SetMeshesActive(astronautFemaleMeshes, false);
+        SetMeshesVisible(astronautMaleMeshes, true);
+        SetMeshesVisible(astronautFemaleMeshes, false);
 
-        SetMeshesActive(kidMaleMeshes, true);
-        SetMeshesActive(kidFemaleMeshes, false);
+        SetMeshesVisible(kidMaleMeshes, true);
+        SetMeshesVisible(kidFemaleMeshes, false);
     }
 
 
     // Called by the FEMALE button
     public void SelectFemale()
     {
-        SetMeshesActive(astronautMaleMeshes, false);
-        SetMeshesActive(astronautFemaleMeshes, true);
+        SetMeshesVisible(astronautMaleMeshes, false);
+        SetMeshesVisible(astronautFemaleMeshes, true);
 
-        SetMeshesActive(kidMaleMeshes, false);
-        SetMeshesActive(kidFemaleMeshes, true);
+        SetMeshesVisible(kidMaleMeshes, false);
+        SetMeshesVisible(kidFemaleMeshes, true);
     }
 
 
-    private void SetMeshesActive(GameObject[] meshes, bool active)
+    private void SetMeshesVisible(Renderer[] meshes, bool visible)
     {
         if (meshes == null)
             return;
 
-        foreach (GameObject mesh in meshes)
+        foreach (Renderer mesh in meshes)
         {
             if (mesh != null)
             {
-                mesh.SetActive(active);
+                // A disabled renderer is neither drawn nor casts shadows.
+                mesh.enabled = visible;
             }
         }
     }

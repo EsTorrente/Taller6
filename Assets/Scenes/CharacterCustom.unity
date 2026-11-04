@@ -2964,13 +2964,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenderSwitcher
   astronautMaleMeshes:
-  - {fileID: 3694055380011900370, guid: 738c58c1f003e6044bd03a7d34bad3ef, type: 3}
-  - {fileID: -6694509667764454688, guid: 738c58c1f003e6044bd03a7d34bad3ef, type: 3}
-  - {fileID: -4338118913566782608, guid: 738c58c1f003e6044bd03a7d34bad3ef, type: 3}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   astronautFemaleMeshes:
-  - {fileID: 4675211205898710782, guid: 738c58c1f003e6044bd03a7d34bad3ef, type: 3}
-  - {fileID: -251532936975105443, guid: 738c58c1f003e6044bd03a7d34bad3ef, type: 3}
-  - {fileID: -6708498775586313784, guid: 738c58c1f003e6044bd03a7d34bad3ef, type: 3}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   kidMaleMeshes: []
   kidFemaleMeshes: []
 --- !u!1 &536986821

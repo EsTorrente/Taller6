@@ -2,88 +2,53 @@
 {
     Properties
     {
-        // =========================================================
-        // TEXTURES
-        // =========================================================
-
+        [Header(Textures)]
         _BaseMap ("Base Texture", 2D) = "white" {}
-        _MaskMap ("RGB Mask", 2D) = "black" {}
+        _MaskMap ("RGB Mask (R Hair, G Skin, B Eyes)", 2D) = "black" {}
 
-
-        // =========================================================
-        // CHARACTER COLORS
-        // =========================================================
-
+        [Header(Character Colors)]
         _HairColor ("Hair Color", Color) = (1,1,1,1)
         _SkinColor ("Skin Color", Color) = (1,1,1,1)
         _EyeColor ("Eye Color", Color) = (1,1,1,1)
-
         _HairStrength ("Hair Strength", Range(0,1)) = 0.922
         _SkinStrength ("Skin Strength", Range(0,1)) = 0.925
         _EyeStrength ("Eye Strength", Range(0,1)) = 0.923
 
-
-        // =========================================================
-        // TOON LIGHTING
-        // =========================================================
-
-        _ShadowColor ("Shadow Color", Color) = (0.341,0.384,0.792,1)
-
-        _ShadowThreshold ("Shadow Threshold", Range(0,1)) = 0.55
-
-        _ShadowSoftness ("Shadow Softness", Range(0,0.5)) = 0.029
-
-        _ShadowLightInfluence
-        (
-            "Shadow Light Color Influence",
-            Range(0,1)
-        ) = 0
-
-
-        // =========================================================
-        // LIGHTING STRENGTH
-        // =========================================================
-
+        [Header(Lighting)]
         _LightIntensity ("Light Intensity", Range(0,2)) = 0.8
+        _ShadowColor ("Shadow Color", Color) = (0.341,0.384,0.792,1)
+        _ShadowThreshold ("Shadow Threshold", Range(0,1)) = 0.55
+        _ShadowSoftness ("Shadow Softness", Range(0,0.5)) = 0.029
+        _ShadowLightInfluence ("Shadow Light Color Influence", Range(0,1)) = 0
 
-
-        // =========================================================
-        // RIM LIGHT
-        // =========================================================
-
+        [Header(Rim Light)]
+        [Enum(Main Light, 0, Custom Light, 1)] _RimLightSource ("Rim Light Source", Float) = 0
+        [Enum(View Edge Dark Side, 0, Light Band At Shadow Edge, 1, Lit Edge Facing The Light, 2)] _RimMode ("Rim Type", Float) = 2
         _RimColor ("Rim Color", Color) = (1,0.651,0.627,1)
-
-        _RimPower ("Rim Power", Range(0.5,8)) = 5.56
-
         _RimIntensity ("Rim Intensity", Range(0,3)) = 0.08
-
-        _RimLightInfluence
-        (
-            "Rim Light Color Influence",
-            Range(0,1)
-        ) = 1
-
-        [Enum(Main Light, 0, Custom Light, 1)]
-        _RimLightSource ("Rim Light Source", Float) = 0
-
-        _RimShadowMask ("Rim Hidden By Cast Shadows", Range(0,1)) = 1
-
+        _RimPower ("Rim Width (Power)", Range(0.5,8)) = 5.56
         _RimThreshold ("Rim Threshold", Range(0,1)) = 0.194
-
         _RimSoftness ("Rim Softness", Range(0,0.5)) = 0
+        _RimLightOffset ("Light Edge Position", Range(-1,1)) = 0
+        _RimLightInfluence ("Rim Light Color Influence", Range(0,1)) = 1
 
-        _RimWobble ("Rim Edge Wobble", Range(0,1)) = 0.25
+        [Header(Rim Shadows)]
+        _RimShadowMask ("Hidden By Cast Shadows", Range(0,1)) = 1
+        _RimShadowBias ("Cast Shadow Bias", Range(0,0.2)) = 0.03
+        _FootRimMask ("Hidden In Foot Shadow", Range(0,1)) = 1
 
-        _RimNoiseScale ("Rim Noise Scale", Float) = 498.2
+        [Header(Rim Painterly Edge)]
+        _RimWobble ("Edge Wobble", Range(0,1)) = 0.25
+        _RimNoiseScale ("Noise Scale", Float) = 498.2
+        _RimBoilSpeed ("Boil Speed", Range(0,10)) = 4.11
+        [Toggle] _RimBoilStepped ("Stepped Boil", Float) = 1
 
-        _RimBoilSpeed ("Rim Boil Speed", Range(0,10)) = 4.11
-
-        [Toggle] _RimBoilStepped ("Stepped Boil (hand-drawn)", Float) = 1
-
-        [Enum(View Edge Dark Side, 0, Light Band At Shadow Edge, 1, Lit Edge Facing The Light, 2)]
-        _RimMode ("Rim Type", Float) = 2
-
-        _RimLightOffset ("Light Edge Position (- dark side, + lit side)", Range(-1,1)) = 0
+        [Header(Foot Shadow)]
+        _FootShadowStrength ("Strength (0 = off)", Range(0,1)) = 0
+        _FootShadowColor ("Color", Color) = (0,0,0,1)
+        _FootShadowStart ("Start Height (fully dark)", Float) = 0
+        _FootShadowEnd ("End Height (no effect)", Float) = 0.5
+        [Enum(Object Space, 0, World Space, 1)] _FootShadowSpace ("Height Space", Float) = 0
     }
 
 
@@ -228,6 +193,14 @@
 
                 float _RimMode;
                 float _RimLightOffset;
+                float _RimShadowBias;
+
+                float _FootRimMask;
+                float _FootShadowSpace;
+                float4 _FootShadowColor;
+                float _FootShadowStrength;
+                float _FootShadowStart;
+                float _FootShadowEnd;
 
             CBUFFER_END
 
@@ -513,8 +486,18 @@
                 // MAIN LIGHT
                 // =================================================
 
+                // Shadow coordinate per pixel (the cascade is chosen per pixel).
+                // Screen space shadows already provide a screen coordinate.
+                #if defined(_MAIN_LIGHT_SHADOWS_SCREEN)
+                    float4 shadowCoord = IN.shadowCoord;
+                #else
+                    float4 shadowCoord =
+                        TransformWorldToShadowCoord(IN.positionWS);
+                #endif
+
+
                 Light mainLight =
-                    GetMainLight(IN.shadowCoord);
+                    GetMainLight(shadowCoord);
 
 
                 // Main light direction
@@ -675,7 +658,6 @@
                 // or the Light picked with the PainterlyRimLight component
                 half3 rimLightDirection = mainLightDirection;
                 half3 rimLightColor = mainLight.color;
-                half rimCastShadow = mainLight.shadowAttenuation;
 
                 if (_RimLightSource > 0.5)
                 {
@@ -687,7 +669,6 @@
 
                     rimLightDirection = normalize(toLight + 1e-5);
                     rimLightColor = _PainterlyRimLightColor.rgb;
-                    rimCastShadow = 1.0;   // the custom light has no shadow map here
                 }
 
 
@@ -767,17 +748,62 @@
                     );
 
 
-                // Hide the rim where another object's shadow covers a surface that faces the light
-                // (surfaces turned away from the light keep their rim)
-                rim *= lerp(
-                    1.0,
-                    rimCastShadow,
+                // Hide the rim inside shadows cast onto the character by other objects.
+                // This always uses the MAIN light's shadow map (the scene's shadows),
+                // whichever light drives the rim, so it also works with a Custom Light.
+                // The lookup is pushed out along the normal so the character's own
+                // surface does not shadow itself (speckles on the rim).
+                half rimShadow = 1.0;
+
+                #if defined(_MAIN_LIGHT_SHADOWS_SCREEN)
+                    rimShadow = mainLight.shadowAttenuation;
+                #else
+                    rimShadow =
+                        MainLightRealtimeShadow(
+                            TransformWorldToShadowCoord(
+                                IN.positionWS +
+                                normalWS * _RimShadowBias
+                            )
+                        );
+                #endif
+
+
+                // A little contrast so the rim is cut off like a painted shadow edge
+                rimShadow = smoothstep(0.15, 0.85, rimShadow);
+
+
+                // Pixels turned away from the main light are always inside the
+                // character's own shadow in the shadow map, so they keep their rim
+                half rimShadowWeight =
                     smoothstep(
-                        0.0,
-                        0.3,
-                        dot(normalWS, rimLightDirection)
-                    ) * _RimShadowMask
-                );
+                        -0.15,
+                        0.1,
+                        dot(normalWS, mainLightDirection)
+                    ) * _RimShadowMask;
+
+
+                rim *= lerp(1.0, rimShadow, rimShadowWeight);
+
+
+                // Foot shadow gradient: 1 at and below Start, 0 at and above End.
+                // Also used to mask the rim out of that area.
+                float footHeight =
+                    _FootShadowSpace > 0.5
+                    ? IN.positionWS.y
+                    : IN.positionOS.y;
+
+                float footMask =
+                    1.0 -
+                    smoothstep(
+                        _FootShadowStart,
+                        max(_FootShadowEnd, _FootShadowStart + 1e-4),
+                        footHeight
+                    );
+
+
+                // Hide the rim wherever the foot shadow is set up
+                // (uses the gradient area itself, even if Strength is 0)
+                rim *= 1.0 - footMask * _FootRimMask;
 
 
                 // Use main light colour
@@ -793,6 +819,18 @@
                     finalRimColor *
                     rim *
                     _RimIntensity;
+
+
+                // =================================================
+                // FOOT SHADOW (top-to-bottom gradient)
+                // =================================================
+
+                finalColor =
+                    lerp(
+                        finalColor,
+                        _FootShadowColor.rgb,
+                        footMask * _FootShadowStrength
+                    );
 
 
                 // =================================================

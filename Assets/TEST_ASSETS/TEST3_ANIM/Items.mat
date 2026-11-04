@@ -123,6 +123,11 @@ Material:
     - _EdgeWidth: 0
     - _EnvironmentReflections: 1
     - _EyeStrength: 0.923
+    - _FootRimMask: 1
+    - _FootShadowEnd: -5.43
+    - _FootShadowSpace: 0
+    - _FootShadowStart: 0.1
+    - _FootShadowStrength: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -141,15 +146,16 @@ Material:
     - _Parallax: 0.02
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _RimIntensity: 3
-    - _RimLightInfluence: 0.273
-    - _RimLightOffset: -0.403
+    - _RimIntensity: 0.03
+    - _RimLightInfluence: 0.083
+    - _RimLightOffset: -1
     - _RimLightSource: 1
     - _RimMode: 2
-    - _RimPower: 8
+    - _RimPower: 2.45
+    - _RimShadowBias: 0.03
     - _RimShadowMask: 1
-    - _RimSoftness: 0
-    - _RimThreshold: 0.92
+    - _RimSoftness: 0.487
+    - _RimThreshold: 0.747
     - _Roughness: 0
     - _ShadowBoil: 0.274
     - _ShadowDarkness: 0.15
@@ -174,8 +180,9 @@ Material:
     - _Color: {r: 0.9063317, g: 0.9063317, b: 0.9063317, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
     - _EyeColor: {r: 1, g: 1, b: 1, a: 1}
+    - _FootShadowColor: {r: 0, g: 0, b: 0, a: 1}
     - _HairColor: {r: 1, g: 1, b: 1, a: 1}
-    - _RimColor: {r: 1, g: 0.7959901, b: 0.5613208, a: 1}
+    - _RimColor: {r: 0.8729336, g: 1, b: 0.11792451, a: 1}
     - _ShadowColor: {r: 0.62, g: 0.6, b: 0.86, a: 1}
     - _ShadowColorB: {r: 0.8, g: 0.61, b: 0.76, a: 1}
     - _SkinColor: {r: 1, g: 1, b: 1, a: 1}

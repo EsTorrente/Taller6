@@ -48,9 +48,20 @@ Shader "Custom/Painterly/WatercolorEnvironment"
         _RimSoftness("Rim Softness", Range(0, 0.5)) = 0
         _RimIntensity("Rim Intensity", Range(0, 3)) = 2.26
         _RimLightInfluence("Rim Light Color Influence", Range(0, 1)) = 1
-        _RimShadowMask("Rim Hidden By Cast Shadows", Range(0, 1)) = 1
         [Enum(View Edge Dark Side, 0, Light Band At Shadow Edge, 1, Lit Edge Facing The Light, 2)] _RimMode("Rim Type", Float) = 2
-        _RimLightOffset("Light Edge Position (- dark side, + lit side)", Range(-1, 1)) = 0
+        _RimLightOffset("Light Edge Position", Range(-1, 1)) = 0
+
+        [Header(Rim Shadows)]
+        _RimShadowMask("Hidden By Cast Shadows", Range(0, 1)) = 1
+        _RimShadowBias("Cast Shadow Bias", Range(0, 0.2)) = 0.03
+        _FootRimMask("Hidden In Foot Shadow", Range(0, 1)) = 1
+
+        [Header(Foot Shadow)]
+        _FootShadowStrength("Strength (0 = off)", Range(0, 1)) = 0
+        _FootShadowColor("Color", Color) = (0, 0, 0, 1)
+        _FootShadowStart("Start Height (fully dark)", Float) = 0
+        _FootShadowEnd("End Height (no effect)", Float) = 0.5
+        [Enum(Object Space, 0, World Space, 1)] _FootShadowSpace("Height Space", Float) = 0
 
         [Header(Procedural Noise)]
         _NoiseScale("Wash Noise Scale", Float) = 3
@@ -125,6 +136,14 @@ Shader "Custom/Painterly/WatercolorEnvironment"
             half _RimLightSource;
             half _RimMode;
             half _RimLightOffset;
+            half _RimShadowBias;
+
+            half _FootRimMask;
+            half _FootShadowStrength;
+            half4 _FootShadowColor;
+            float _FootShadowStart;
+            float _FootShadowEnd;
+            half _FootShadowSpace;
 
             float _NoiseScale;
             half _NoiseWobble;
@@ -254,6 +273,13 @@ Shader "Custom/Painterly/WatercolorEnvironment"
         {
             half l = dot(c, half3(0.299, 0.587, 0.114));
             return max(lerp(half3(l, l, l), c, 1.0 + _EdgeSaturation), 0.0) * (1.0 - _EdgeDarkness);
+        }
+
+        // Top-to-bottom gradient: 1 at and below Start height, 0 at and above End height.
+        float FootMask(float3 positionOS, float3 positionWS)
+        {
+            float h = _FootShadowSpace > 0.5 ? positionWS.y : positionOS.y;
+            return 1.0 - smoothstep(_FootShadowStart, max(_FootShadowEnd, _FootShadowStart + 1e-4), h);
         }
         ENDHLSL
 
@@ -446,14 +472,12 @@ Shader "Custom/Painterly/WatercolorEnvironment"
                 // which light drives the rim: the main light, or the Light picked with PainterlyRimLight.cs
                 float3 Lr = L;
                 float3 Cr = ml.color;
-                float rimCast = castWash;
                 if (_RimLightSource > 0.5)
                 {
                     // w = 0: directional (xyz = direction toward the light), w = 1: point/spot (xyz = position)
                     float3 toLight = _PainterlyRimLightPos.xyz - i.positionWS * _PainterlyRimLightPos.w;
                     Lr = normalize(toLight + 1e-5);
                     Cr = _PainterlyRimLightColor.rgb;
-                    rimCast = 1.0;   // the custom light has no shadow map here
                 }
 
                 float lf = saturate(dot(Ng, Lr));
@@ -475,11 +499,23 @@ Shader "Custom/Painterly/WatercolorEnvironment"
                 float rsoft = max(_RimSoftness, 0.001);
                 float rim = smoothstep(_RimThreshold - rsoft, _RimThreshold + rsoft, rimRaw + (en - 0.5) * 0.25);
                 float3 rimCol = lerp(_RimColor.rgb, _RimColor.rgb * Cr, _RimLightInfluence);
-                // Hide the rim where another object's shadow covers a surface that faces the light.
-                // (Surfaces turned away from the light keep their rim: the shadow map is unreliable there.)
-                float facing = smoothstep(0.0, 0.3, dot(Ng, Lr));
-                float rimVisible = lerp(1.0, rimCast, facing * _RimShadowMask);
-                col += rimCol * rim * _RimIntensity * rimVisible;
+                // Hide the rim inside shadows cast onto the surface by other objects.
+                // Always uses the MAIN light's shadow map (the scene's shadows), whichever light drives the rim,
+                // so it also works with a Custom Light. The lookup is pushed out along the normal so the
+                // surface does not shadow itself (speckles on the rim).
+                float rimShadow = MainLightRealtimeShadow(TransformWorldToShadowCoord(i.positionWS + Ng * _RimShadowBias));
+                rimShadow = smoothstep(0.15, 0.85, rimShadow + noiseOff * 1.5);   // same painted edge as the shadows
+                // Pixels turned away from the main light are always inside the surface's own shadow
+                // in the shadow map, so they keep their rim.
+                float rimShadowWeight = smoothstep(-0.15, 0.1, dot(Ng, L)) * _RimShadowMask;
+
+                // The foot shadow gradient area also hides the rim.
+                float foot = FootMask(i.positionOS, i.positionWS);
+
+                col += rimCol * rim * _RimIntensity * lerp(1.0, rimShadow, rimShadowWeight) * (1.0 - foot * _FootRimMask);
+
+                // ---- foot shadow: fade the bottom of the object to a chosen color
+                col = lerp(col, _FootShadowColor.rgb, foot * _FootShadowStrength);
 
                 // ---- paper grain (very subtle)
                 col *= 1.0 + (VNoise(p * _GranuleScale * 2.7 + 5.0) - 0.5) * _PaperGrain * 2.0;
@@ -521,6 +557,7 @@ Shader "Custom/Painterly/WatercolorEnvironment"
                 float3 positionOS : TEXCOORD1;
                 float  ext        : TEXCOORD2;
                 half   fogFactor  : TEXCOORD3;
+                float3 positionWS : TEXCOORD4;
             };
 
             VaryingsB vertB(AttributesB v)
@@ -533,6 +570,7 @@ Shader "Custom/Painterly/WatercolorEnvironment"
                 float3 posWS = TransformObjectToWorld(v.positionOS.xyz);
                 float3 nWS = TransformObjectToWorldNormal(v.normalOS);
                 posWS += nWS * (_EdgeWidth * ext);
+                o.positionWS = posWS;
 
                 o.positionCS = TransformWorldToHClip(posWS);
                 o.uv = TRANSFORM_TEX(v.uv, _BaseMap);
@@ -553,6 +591,9 @@ Shader "Custom/Painterly/WatercolorEnvironment"
                 float3 albedo = SampleAlbedo(i.uv);
                 float3 c = EdgePigment(albedo * lerp(1.0, _MainLightColor.rgb, 0.5));
                 c *= 0.85 + 0.3 * n;   // pigment density variation
+
+                // keep the outer bleed in step with the foot shadow
+                c = lerp(c, _FootShadowColor.rgb, FootMask(i.positionOS, i.positionWS) * _FootShadowStrength);
 
                 c = MixFog(c, i.fogFactor);
                 return half4(c, 1);
