@@ -5,42 +5,32 @@ using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.Universal;
 
 /// <summary>
-/// Brush-stroke atlas + canvas + surface-aligned colour bleed (Unity 6 / URP, RenderGraph, XR safe).
-/// Two passes: a tiny flow-tensor pass and one full-res composite. All tweakables live in the PainterlyVolume.
+/// Watercolour post effect (Unity 6 / URP, RenderGraph, XR safe). Two passes: a tiny flow-tensor pass and one
+/// full-res composite that uses colour + depth + normals. All tweakables live in the PainterlyVolume.
 /// </summary>
 public class PainterlyFeature : ScriptableRendererFeature
 {
     [Header("Assets")]
     public Shader shader;
-    [Tooltip("Brush stamp atlas (white strokes on black). Import with sRGB OFF, mipmaps ON, Wrap = Clamp.")]
-    public Texture2D brushTexture;
-    public int atlasColumns = 6;
-    public int atlasRows = 6;
-    [Tooltip("Tileable canvas texture. Import with sRGB OFF, mipmaps ON, Wrap = Repeat.")]
+    [Tooltip("Tileable paper texture. Import with sRGB OFF, mipmaps ON, Wrap = Repeat.")]
     public Texture2D canvasTexture;
 
     [Header("Injection")]
     public RenderPassEvent injectionPoint = RenderPassEvent.BeforeRenderingPostProcessing;
     public bool applyInSceneView = false;
 
-    // ---- Runtime animation control (see PainterlyAnimationController) -------------------------------------
+    // ---- Runtime animation control (see PainterlyAnimationController) -----------------------------------
     public static float AnimationSpeedMultiplier = 1f;
     public static bool UseUnscaledTime = true;
 
-    static float s_Phase;
-    static int s_LastPhaseFrame = -1;
+    static double s_Time;
+    static int s_LastFrame = -1;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    static void ResetStatics()
-    {
-        AnimationSpeedMultiplier = 1f;
-        UseUnscaledTime = true;
-        s_Phase = 0f;
-        s_LastPhaseFrame = -1;
-    }
+    static void ResetStatics() { AnimationSpeedMultiplier = 1f; UseUnscaledTime = true; s_Time = 0; s_LastFrame = -1; }
 
-    /// <summary>Advance the stroke re-roll by exactly one step (handy for stop-motion style control).</summary>
-    public static void StepAnimation() { s_Phase = Mathf.Floor(s_Phase) + 1f; }
+    /// <summary>Jump the paper flow forward by one time unit.</summary>
+    public static void StepAnimation() { s_Time += 1.0; }
 
     Material material;
     PainterlyPass pass;
@@ -56,31 +46,26 @@ public class PainterlyFeature : ScriptableRendererFeature
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
     {
         if (pass == null || material == null) return;
-
         var camType = renderingData.cameraData.cameraType;
         if (camType != CameraType.Game && !(applyInSceneView && camType == CameraType.SceneView)) return;
 
         var v = VolumeManager.instance.stack.GetComponent<PainterlyVolume>();
         if (v == null || !v.IsActive()) return;
 
-        // Accumulated phase (not Time * speed) so changing the speed never makes the strokes jump.
-        if (s_LastPhaseFrame != Time.frameCount)
+        // Accumulated time (not Time * speed) so changing the speed never makes anything jump.
+        if (s_LastFrame != Time.frameCount)
         {
-            s_LastPhaseFrame = Time.frameCount;
+            s_LastFrame = Time.frameCount;
             float dt = UseUnscaledTime ? Time.unscaledDeltaTime : Time.deltaTime;
-            s_Phase += dt * v.animationSpeed.value * AnimationSpeedMultiplier;
+            s_Time += dt * v.animationSpeed.value * AnimationSpeedMultiplier;
         }
 
         pass.renderPassEvent = injectionPoint;
-        pass.Setup(v, brushTexture, atlasColumns, atlasRows, canvasTexture, Mathf.Floor(s_Phase) % 100000f);
+        pass.Setup(v, canvasTexture, (float)(s_Time % 1024.0));
         renderer.EnqueuePass(pass);
     }
 
-    protected override void Dispose(bool disposing)
-    {
-        CoreUtils.Destroy(material);
-        material = null;
-    }
+    protected override void Dispose(bool disposing) { CoreUtils.Destroy(material); material = null; }
 
     // =========================================================================================================
     sealed class PainterlyPass : ScriptableRenderPass
@@ -89,54 +74,25 @@ public class PainterlyFeature : ScriptableRendererFeature
 
         static readonly int idSrc = Shader.PropertyToID("_PaintSrc");
         static readonly int idTensor = Shader.PropertyToID("_PaintTensor");
-        static readonly int idAtlas = Shader.PropertyToID("_PaintBrushAtlas");
         static readonly int idCanvas = Shader.PropertyToID("_PaintCanvas");
         static readonly int idTexel = Shader.PropertyToID("_PaintTexel");
         static readonly int idFullTexel = Shader.PropertyToID("_PaintFullTexel");
         static readonly int idDown = Shader.PropertyToID("_DownFactor");
-        static readonly int idIntensity = Shader.PropertyToID("_Intensity");
-        static readonly int idStrokeStrength = Shader.PropertyToID("_StrokeStrength");
-        static readonly int idStrokeCell = Shader.PropertyToID("_StrokeCellPx");
-        static readonly int idStrokeStamp = Shader.PropertyToID("_StrokeStamp");
-        static readonly int idStrokeElong = Shader.PropertyToID("_StrokeElong");
-        static readonly int idFlow = Shader.PropertyToID("_FlowFollow");
-        static readonly int idPigment = Shader.PropertyToID("_PigmentContrast");
-        static readonly int idStrokeEdge = Shader.PropertyToID("_StrokeEdgeDark");
-        static readonly int idHue = Shader.PropertyToID("_HueVar");
-        static readonly int idSat = Shader.PropertyToID("_SatVar");
-        static readonly int idVal = Shader.PropertyToID("_ValVar");
-        static readonly int idSeed = Shader.PropertyToID("_AnimSeed");
-        static readonly int idAtlasGrid = Shader.PropertyToID("_AtlasGrid");
-        static readonly int idAtlasLod = Shader.PropertyToID("_AtlasLod");
-        static readonly int idBleed = Shader.PropertyToID("_Bleed");
-        static readonly int idBleedPx = Shader.PropertyToID("_BleedPx");
-        static readonly int idBleedRot = Shader.PropertyToID("_BleedRot");
-        static readonly int idEdgeDark = Shader.PropertyToID("_EdgeDark");
-        static readonly int idEdgeGain = Shader.PropertyToID("_EdgeGain");
-        static readonly int idCanvasStrength = Shader.PropertyToID("_CanvasStrength");
-        static readonly int idCanvasPx = Shader.PropertyToID("_CanvasPx");
-        static readonly int idCanvasMid = Shader.PropertyToID("_CanvasMid");
-        static readonly int idLite = Shader.PropertyToID("_Lite");
-        static readonly int idShadowAddCount = Shader.PropertyToID("_ShadowAddCount");
-        static readonly int idShadowPaint = Shader.PropertyToID("_ShadowPaint");
-        static readonly int idShadowWobble = Shader.PropertyToID("_ShadowWobblePx");
-        static readonly int idShadowSoft = Shader.PropertyToID("_ShadowSoft");
-        static readonly int idShadowAmbient = Shader.PropertyToID("_ShadowAmbient");
-        static readonly int idShadowDarken = Shader.PropertyToID("_ShadowDarken");
-        static readonly int idShadowEdge = Shader.PropertyToID("_ShadowEdge");
         static readonly int idShadowTint = Shader.PropertyToID("_ShadowTint");
+        static readonly int idOutlineColor = Shader.PropertyToID("_OutlineColor");
+        static readonly int[] idP =
+        {
+            Shader.PropertyToID("_P0"), Shader.PropertyToID("_P1"), Shader.PropertyToID("_P2"),
+            Shader.PropertyToID("_P3"), Shader.PropertyToID("_P4"), Shader.PropertyToID("_P5"),
+            Shader.PropertyToID("_P6"), Shader.PropertyToID("_P7"), Shader.PropertyToID("_P8")
+        };
 
-        // Per-frame parameter block. Allocated once; mutated each frame.
         sealed class Params
         {
-            public float down, intensity;
-            public float strokeStrength, strokeCell, strokeStamp, strokeElong, flow, pigment, strokeEdge;
-            public float hue, sat, val, seed, atlasCols, atlasRows, atlasLod;
-            public float bleed, bleedPx, bleedCos, bleedSin;
-            public float edgeDark, edgeGain, canvasStrength, canvasPx, canvasMid;
-            public float lite, shadowAddCount, shadowPaint, shadowWobble, shadowSoft, shadowAmbient, shadowDarken, shadowEdge;
-            public Vector4 shadowTint;
-            public Texture atlas, canvas;
+            public float down;
+            public readonly Vector4[] v = new Vector4[9];
+            public Vector4 shadowTint, outlineColor;
+            public Texture canvas;
         }
 
         sealed class PassData
@@ -151,32 +107,26 @@ public class PainterlyFeature : ScriptableRendererFeature
         readonly Material mat;
         readonly Params p = new Params();
         static readonly MaterialPropertyBlock s_Mpb = new MaterialPropertyBlock();
-        static readonly BaseRenderFunc<PassData, RasterGraphContext> s_Exec = Exec; // cached: no per-frame delegate alloc
+        static readonly BaseRenderFunc<PassData, RasterGraphContext> s_Exec = Exec;
 
         PainterlyVolume vol;
+        float time;
 
         public PainterlyPass(Material m)
         {
             mat = m;
-            ConfigureInput(ScriptableRenderPassInput.None);
+            ConfigureInput(ScriptableRenderPassInput.Depth | ScriptableRenderPassInput.Normal);
             requiresIntermediateTexture = true;
         }
 
-        public void Setup(PainterlyVolume v, Texture2D atlas, int cols, int rows, Texture2D canvas, float seed)
+        public void Setup(PainterlyVolume v, Texture2D canvas, float t)
         {
             vol = v;
-            p.atlas = atlas != null ? atlas : Texture2D.blackTexture;   // no atlas -> no strokes
+            time = t;
             p.canvas = canvas != null ? canvas : Texture2D.whiteTexture;
-            p.atlasCols = Mathf.Max(1, cols);
-            p.atlasRows = Mathf.Max(1, rows);
-            p.seed = seed;
-
-            // Depth is only needed by the bleed. No bleed -> no depth prepass / copy.
-            bool needDepth = (v.bleed.value > 0f && v.bleedStep.value > 0f) || v.shadowPaint.value > 0f;
-            ConfigureInput(needDepth ? ScriptableRenderPassInput.Depth : ScriptableRenderPassInput.None);
+            ConfigureInput(ScriptableRenderPassInput.Depth | ScriptableRenderPassInput.Normal); // both are always needed
         }
 
-        // -----------------------------------------------------------------------------------------------------
         public override void RecordRenderGraph(RenderGraph rg, ContextContainer frameData)
         {
             var res = frameData.Get<UniversalResourceData>();
@@ -195,24 +145,23 @@ public class PainterlyFeature : ScriptableRendererFeature
 
             var lightData = frameData.Get<UniversalLightData>();
             BuildParams(fullH, factor, Mathf.Max(0, lightData.additionalLightsCount));
-            bool needDepth = (p.bleed > 0f && p.bleedPx > 0f) || p.shadowPaint > 0f;
 
             TextureHandle src = res.activeColorTexture;
 
-            // 1 - flow tensor, straight from the camera colour, at working resolution
             var td = desc; td.width = workW; td.height = workH;
-            td.graphicsFormat = GraphicsFormat.R16G16B16A16_SFloat;   // signed values, no colour-space conversion
+            td.graphicsFormat = GraphicsFormat.R16G16B16A16_SFloat;
             td.depthStencilFormat = GraphicsFormat.None;
             var tensor = UniversalRenderer.CreateRenderGraphTexture(rg, td, "_PaintTensor", false, FilterMode.Bilinear);
-            AddPass(rg, "Painterly Flow", PassTensor, src, default, tensor, workW, workH, fullW, fullH, default, default, default);
+            AddPass(rg, "Painterly Flow", PassTensor, src, default, tensor, workW, workH, fullW, fullH, default, default, default, default);
 
-            // 2 - composite at full resolution
             var final = UniversalRenderer.CreateRenderGraphTexture(rg, desc, "_PaintFinal", false, FilterMode.Bilinear);
-            TextureHandle depth = (needDepth && res.cameraDepthTexture.IsValid()) ? res.cameraDepthTexture : default;
-            // The shadow map is only requested when shadows are repainted, so it is never kept alive for nothing.
-            TextureHandle shadows = (p.shadowPaint > 0f && res.mainShadowsTexture.IsValid()) ? res.mainShadowsTexture : default;
-            TextureHandle addShadows = (p.shadowPaint > 0f && p.shadowAddCount > 0f && res.additionalShadowsTexture.IsValid()) ? res.additionalShadowsTexture : default;
-            AddPass(rg, "Painterly Composite", PassComposite, src, tensor, final, fullW, fullH, fullW, fullH, depth, shadows, addShadows);
+            TextureHandle depth = res.cameraDepthTexture.IsValid() ? res.cameraDepthTexture : default;
+            TextureHandle normals = res.cameraNormalsTexture.IsValid() ? res.cameraNormalsTexture : default;
+            bool sh = vol.shadowPaint.value > 0f;
+            TextureHandle shadows = (sh && res.mainShadowsTexture.IsValid()) ? res.mainShadowsTexture : default;
+            TextureHandle addShadows = (sh && p.v[7].x > 0f && res.additionalShadowsTexture.IsValid()) ? res.additionalShadowsTexture : default;
+            // normals are bound together with depth through the same list
+            AddPass(rg, "Painterly Composite", PassComposite, src, tensor, final, fullW, fullH, fullW, fullH, depth, normals, shadows, addShadows);
 
             res.cameraColor = final;
         }
@@ -220,86 +169,53 @@ public class PainterlyFeature : ScriptableRendererFeature
         void BuildParams(int fullH, int factor, int addLightsInScene)
         {
             var v = vol;
-            float refScale = v.scaleWithResolution.value ? fullH / v.referenceHeight.value : 1f;
+            bool lite = v.questMode.value;
+            float rs = v.scaleWithResolution.value ? fullH / v.referenceHeight.value : 1f;
 
             p.down = factor;
-            p.intensity = v.intensity.value;
+            p.v[0] = new Vector4(v.intensity.value, Mathf.Max(8f, v.noiseScale.value * rs), v.wobble.value * rs, time);
+            p.v[1] = new Vector4(v.flowSmear.value, v.flowLength.value * rs, v.fillNoise.value, Mathf.Max(8f, v.pigmentScale.value * rs));
+            p.v[2] = new Vector4(v.stepAmount.value, v.steps.value, v.stepSoftness.value, v.stepNoise.value);
+            p.v[3] = new Vector4(v.poolStrength.value, v.poolWidth.value * rs, v.depthEdgeSensitivity.value, v.normalEdgeSensitivity.value);
+            p.v[4] = new Vector4(v.colorEdge.value, v.colorEdgeSensitivity.value, v.creviceStrength.value, v.creviceRadius.value * rs);
+            p.v[5] = new Vector4(v.silhouetteBleed.value * rs, v.bleedFeather.value, v.outline.value, lite ? 1f : 0f);
+            p.v[6] = new Vector4(v.canvasStrength.value, Mathf.Max(16f, v.canvasSize.value * rs), v.canvasMidpoint.value, v.anchorToView.value ? 1f : 0f);
+            int addWanted = lite ? Mathf.Min(1, v.shadowAdditionalLights.value) : v.shadowAdditionalLights.value;
+            p.v[7] = new Vector4(Mathf.Min(addWanted, addLightsInScene), v.shadowPaint.value, v.shadowWobble.value * rs, v.shadowSoftness.value);
+            p.v[8] = new Vector4(Mathf.Max(0.05f, v.shadowAmbient.value), v.shadowDarken.value, v.shadowEdge.value, v.pigmentSaturation.value);
 
-            p.strokeStrength = v.strokeStrength.value;
-            p.strokeCell = Mathf.Max(4f, v.strokeSize.value * refScale);
-            p.strokeStamp = v.strokeStamp.value;
-            p.strokeElong = v.strokeElongation.value;
-            p.flow = v.strokeFlowFollow.value;
-            p.pigment = v.pigmentContrast.value;
-            p.strokeEdge = v.strokeEdgeDarkening.value;
-            p.hue = v.hueVariation.value * Mathf.Deg2Rad;
-            p.sat = v.saturationVariation.value;
-            p.val = v.valueVariation.value;
-
-            // Fixed mip level for the atlas (no derivatives across tile borders): atlas texels per screen pixel.
-            float tilePx = p.atlas.width / p.atlasCols;
-            float stampPx = Mathf.Max(1f, p.strokeCell * p.strokeStamp);
-            float lod = Mathf.Max(0f, Mathf.Log(tilePx / stampPx, 2f) - 0.25f);
-            p.atlasLod = Mathf.Min(lod, Mathf.Max(0, p.atlas.mipmapCount - 1));
-
-            p.bleed = v.bleed.value;
-            p.bleedPx = v.bleedStep.value * refScale;
-            float a = v.bleedAngle.value * Mathf.Deg2Rad;
-            p.bleedCos = Mathf.Cos(a);
-            p.bleedSin = Mathf.Sin(a);
-
-            p.lite = v.questMode.value ? 1f : 0f;
-            p.shadowPaint = v.shadowPaint.value;
-            int addWanted = v.questMode.value ? Mathf.Min(1, v.shadowAdditionalLights.value) : v.shadowAdditionalLights.value;
-            p.shadowAddCount = Mathf.Min(addWanted, addLightsInScene);
-            p.shadowWobble = v.shadowWobble.value * refScale;
-            p.shadowSoft = v.shadowSoftness.value;
-            p.shadowAmbient = Mathf.Max(0.05f, v.shadowAmbient.value);
-            p.shadowDarken = v.shadowDarken.value;
-            p.shadowEdge = v.shadowEdge.value;
-            Color tint = v.shadowTint.value;
-            if (QualitySettings.activeColorSpace == ColorSpace.Linear) tint = tint.linear;
+            Color tint = v.shadowTint.value, ol = v.outlineColor.value;
+            if (QualitySettings.activeColorSpace == ColorSpace.Linear) { tint = tint.linear; ol = ol.linear; }
             p.shadowTint = new Vector4(tint.r, tint.g, tint.b, 1f);
-
-            p.edgeDark = v.edgeDarkening.value;
-            p.edgeGain = v.edgeSensitivity.value;
-            p.canvasStrength = v.canvasStrength.value;
-            p.canvasPx = Mathf.Max(16f, v.canvasSize.value * refScale);
-            p.canvasMid = v.canvasMidpoint.value;
+            p.outlineColor = new Vector4(ol.r, ol.g, ol.b, 1f);
         }
 
-        void AddPass(RenderGraph rg, string name, int shaderPass,
-                     TextureHandle src, TextureHandle tensor, TextureHandle dst,
-                     int dstW, int dstH, int fullW, int fullH, TextureHandle depth, TextureHandle shadows, TextureHandle addShadows)
+        void AddPass(RenderGraph rg, string name, int shaderPass, TextureHandle src, TextureHandle tensor, TextureHandle dst,
+                     int dstW, int dstH, int fullW, int fullH, TextureHandle a, TextureHandle b2, TextureHandle c2, TextureHandle d2 = default)
         {
             using (var b = rg.AddRasterRenderPass<PassData>(name, out var d))
             {
-                d.mat = mat;
-                d.pass = shaderPass;
-                d.src = src;
-                d.tensor = tensor;
+                d.mat = mat; d.pass = shaderPass; d.src = src; d.tensor = tensor;
                 d.texel = new Vector4(1f / dstW, 1f / dstH, dstW, dstH);
                 d.fullTexel = new Vector4(1f / fullW, 1f / fullH, fullW, fullH);
                 d.p = p;
 
                 b.UseTexture(src, AccessFlags.Read);
                 if (tensor.IsValid()) b.UseTexture(tensor, AccessFlags.Read);
-                if (depth.IsValid()) b.UseTexture(depth, AccessFlags.Read);
-                if (shadows.IsValid()) b.UseTexture(shadows, AccessFlags.Read);
-                if (addShadows.IsValid()) b.UseTexture(addShadows, AccessFlags.Read);
+                if (a.IsValid()) b.UseTexture(a, AccessFlags.Read);
+                if (b2.IsValid()) b.UseTexture(b2, AccessFlags.Read);
+                if (c2.IsValid()) b.UseTexture(c2, AccessFlags.Read);
+                if (d2.IsValid()) b.UseTexture(d2, AccessFlags.Read);
                 b.SetRenderAttachment(dst, 0);
                 b.SetRenderFunc(s_Exec);
             }
         }
 
-        // Everything is bound through a MaterialPropertyBlock that is snapshotted by DrawProcedural, so values
-        // can never leak between passes or cameras. The flow pass only receives what it needs.
         static void Exec(PassData d, RasterGraphContext ctx)
         {
             var b = s_Mpb;
             b.Clear();
             var p = d.p;
-
             b.SetTexture(idSrc, d.src);
             b.SetVector(idTexel, d.texel);
             b.SetVector(idFullTexel, d.fullTexel);
@@ -311,42 +227,11 @@ public class PainterlyFeature : ScriptableRendererFeature
             else
             {
                 b.SetTexture(idTensor, d.tensor);
-                b.SetTexture(idAtlas, p.atlas);
                 b.SetTexture(idCanvas, p.canvas);
-
-                b.SetFloat(idIntensity, p.intensity);
-                b.SetFloat(idStrokeStrength, p.strokeStrength);
-                b.SetFloat(idStrokeCell, p.strokeCell);
-                b.SetFloat(idStrokeStamp, p.strokeStamp);
-                b.SetFloat(idStrokeElong, p.strokeElong);
-                b.SetFloat(idFlow, p.flow);
-                b.SetFloat(idPigment, p.pigment);
-                b.SetFloat(idStrokeEdge, p.strokeEdge);
-                b.SetFloat(idHue, p.hue);
-                b.SetFloat(idSat, p.sat);
-                b.SetFloat(idVal, p.val);
-                b.SetFloat(idSeed, p.seed);
-                b.SetVector(idAtlasGrid, new Vector4(p.atlasCols, p.atlasRows, 0, 0));
-                b.SetFloat(idAtlasLod, p.atlasLod);
-                b.SetFloat(idBleed, p.bleed);
-                b.SetFloat(idBleedPx, p.bleedPx);
-                b.SetVector(idBleedRot, new Vector4(p.bleedCos, p.bleedSin, 0, 0));
-                b.SetFloat(idEdgeDark, p.edgeDark);
-                b.SetFloat(idEdgeGain, p.edgeGain);
-                b.SetFloat(idCanvasStrength, p.canvasStrength);
-                b.SetFloat(idCanvasPx, p.canvasPx);
-                b.SetFloat(idCanvasMid, p.canvasMid);
-                b.SetFloat(idLite, p.lite);
-                b.SetFloat(idShadowAddCount, p.shadowAddCount);
-                b.SetFloat(idShadowPaint, p.shadowPaint);
-                b.SetFloat(idShadowWobble, p.shadowWobble);
-                b.SetFloat(idShadowSoft, p.shadowSoft);
-                b.SetFloat(idShadowAmbient, p.shadowAmbient);
-                b.SetFloat(idShadowDarken, p.shadowDarken);
-                b.SetFloat(idShadowEdge, p.shadowEdge);
+                for (int i = 0; i < idP.Length; i++) b.SetVector(idP[i], p.v[i]);
                 b.SetVector(idShadowTint, p.shadowTint);
+                b.SetVector(idOutlineColor, p.outlineColor);
             }
-
             ctx.cmd.DrawProcedural(Matrix4x4.identity, d.mat, d.pass, MeshTopology.Triangles, 3, 1, b);
         }
     }
