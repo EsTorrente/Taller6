@@ -797,19 +797,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3991606391452449901, guid: d6878e1999eb4b44a9f5a263af86c185, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.038181506
+      value: -0.038181495
       objectReference: {fileID: 0}
     - target: {fileID: 3991606391452449901, guid: d6878e1999eb4b44a9f5a263af86c185, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.007785959
+      value: 0.0077859564
       objectReference: {fileID: 0}
     - target: {fileID: 4767675841445245110, guid: d6878e1999eb4b44a9f5a263af86c185, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.038181506
+      value: -0.038181495
       objectReference: {fileID: 0}
     - target: {fileID: 4767675841445245110, guid: d6878e1999eb4b44a9f5a263af86c185, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.007785959
+      value: -0.0077859564
       objectReference: {fileID: 0}
     - target: {fileID: 4820869512531294039, guid: d6878e1999eb4b44a9f5a263af86c185, type: 3}
       propertyPath: m_LocalRotation.x
@@ -1170,6 +1170,65 @@ VisualEffect:
       m_Array: []
     m_Bool:
       m_Array: []
+--- !u!1 &1298060512
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1298060514}
+  - component: {fileID: 1298060513}
+  m_Layer: 0
+  m_Name: Rock Swirl
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1298060513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1298060512}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f89a34d6ac8f5724fabbb5a7c85a7fd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RockSwirl
+  disc: {fileID: 992273585}
+  rocks:
+  - {fileID: 577435789970383819}
+  - {fileID: 7823513435538828165}
+  - {fileID: 3430288057677710924}
+  - {fileID: 4283152303274503588}
+  - {fileID: 6886499945285876824}
+  - {fileID: 39693601173076724}
+  - {fileID: 4331170674598445799}
+  - {fileID: 4688767997474307931}
+  - {fileID: 870207385894523093}
+  - {fileID: 1083529357176860950}
+  - {fileID: 7761320883758172442}
+  speed: 1.5
+  director: {fileID: 1011721408}
+--- !u!4 &1298060514
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1298060512}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1988538274
 GameObject:
   m_ObjectHideFlags: 0
@@ -3685,3 +3744,4 @@ SceneRoots:
   - {fileID: 1988538276}
   - {fileID: 744589114}
   - {fileID: 298664957}
+  - {fileID: 1298060514}

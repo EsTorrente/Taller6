@@ -1,0 +1,17 @@
+{
+    "name": "Unity.VisualEffectGraph.EditorTests",
+    "references": [
+        "Unity.ShaderGraph.Editor",
+        "Unity.VisualEffectGraph.Editor",
+        "Unity.RenderPipelines.Universal.Editor",
+        "Unity.RenderPipelines.Universal.Runtime",
+        "Unity.RenderPipelines.Core.Runtime",
+        "Unity.RenderPipelines.Core.Editor",
+        "Unity.XR.CoreUtils",
+        "Unity.Timeline"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "autoReferenced": false
+}
