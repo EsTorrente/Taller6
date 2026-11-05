@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Walls
-  m_Shader: {fileID: 4800000, guid: 6e408cd9038a90941adafa7cdeff6d1f, type: 3}
+  m_Shader: {fileID: 4800000, guid: 5587a49448a22dc4e92e6480e4a8ff71, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -104,7 +104,7 @@ Material:
     - _AddPrecomputedVelocity: 0
     - _AlphaClip: 0
     - _AlphaToMask: 0
-    - _AmbientInfluence: 0.416
+    - _AmbientInfluence: 0
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _BoilStepped: 1
@@ -124,13 +124,13 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _DstBlendAlpha: 0
-    - _EdgeDarkness: 0.358
-    - _EdgeIntensity: 0.521
+    - _EdgeDarkness: 0
+    - _EdgeIntensity: 0
     - _EdgeNoiseScale: 498.2
     - _EdgePooling: 1
-    - _EdgeSaturation: 0.279
-    - _EdgeSpeed: 4.11
-    - _EdgeWidth: 0.0023
+    - _EdgeSaturation: 0
+    - _EdgeSpeed: 0
+    - _EdgeWidth: 0
     - _EnvironmentReflections: 1
     - _FootRimMask: 1
     - _FootShadowEnd: 0.06
@@ -142,10 +142,12 @@ Material:
     - _GlossyReflections: 1
     - _Granulation: 0.021
     - _GranuleScale: 9
-    - _InnerEdgeWidth: 0.392
-    - _LightIntensity: 1
+    - _InnerEdgeWidth: 0
+    - _LightIntensity: 1.225
     - _Metallic: 1
     - _Mode: 0
+    - _NoNormalMap: 0
+    - _NoSpecular: 0
     - _NoiseScale: 3
     - _NoiseWobble: 0.152
     - _NormalInfluence: 1
@@ -166,11 +168,11 @@ Material:
     - _RimThreshold: 0
     - _Roughness: 0.323
     - _ShadowBoil: 0.274
-    - _ShadowDarkness: 0.15
-    - _ShadowLightInfluence: 0.747
-    - _ShadowSoftness: 0.052
-    - _ShadowStrength: 0.6
-    - _ShadowThreshold: 0.5
+    - _ShadowDarkness: 0.8
+    - _ShadowLightInfluence: 0.383
+    - _ShadowSoftness: 0
+    - _ShadowStrength: 0.911
+    - _ShadowThreshold: 0
     - _Smoothness: 0.6127273
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -188,8 +190,8 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FootShadowColor: {r: 0, g: 0, b: 0, a: 1}
     - _RimColor: {r: 1, g: 0.65999997, b: 0.65999997, a: 1}
-    - _ShadowColor: {r: 0.62, g: 0.6, b: 0.86, a: 1}
-    - _ShadowColorB: {r: 0.8, g: 0.61, b: 0.76, a: 1}
+    - _ShadowColor: {r: 0.052314002, g: 0.04013884, b: 0.20754719, a: 1}
+    - _ShadowColorB: {r: 0.084905684, g: 0.01882343, b: 0.07113854, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

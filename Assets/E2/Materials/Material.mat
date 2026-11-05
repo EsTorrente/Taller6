@@ -21,12 +21,13 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Material
-  m_Shader: {fileID: 4800000, guid: 5587a49448a22dc4e92e6480e4a8ff71, type: 3}
+  m_Shader: {fileID: 4800000, guid: bcad74f6ab5a4b045b553823d01457f6, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords:
   - _BOILSTEPPED_ON
+  - _RIMBOILSTEPPED_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -135,15 +136,20 @@ Material:
     - _EdgeSpeed: 4.11
     - _EdgeWidth: 0.0023
     - _EnvironmentReflections: 1
-    - _EyeStrength: 0.923
+    - _EyeStrength: 0
+    - _FootRimMask: 1
+    - _FootShadowEnd: 3.1
+    - _FootShadowSpace: 0
+    - _FootShadowStart: 0
+    - _FootShadowStrength: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.022727251
     - _GlossyReflections: 1
     - _Granulation: 0.021
     - _GranuleScale: 9
-    - _HairStrength: 0.922
+    - _HairStrength: 0
     - _InnerEdgeWidth: 0.392
-    - _LightIntensity: 1
+    - _LightIntensity: 0
     - _Metallic: 0
     - _Mode: 0
     - _NoiseScale: 3
@@ -154,19 +160,28 @@ Material:
     - _Parallax: 0.02
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _RimIntensity: 2.26
+    - _RimBoilSpeed: 4.11
+    - _RimBoilStepped: 1
+    - _RimIntensity: 0
     - _RimLightInfluence: 1
-    - _RimPower: 6.43
+    - _RimLightOffset: -0.77
+    - _RimLightSource: 1
+    - _RimMode: 2
+    - _RimNoiseScale: 498.2
+    - _RimPower: 0.5
+    - _RimShadowBias: 0
+    - _RimShadowMask: 1
     - _RimSoftness: 0
-    - _RimThreshold: 0.194
+    - _RimThreshold: 0.144
+    - _RimWobble: 0.25
     - _Roughness: 1
     - _ShadowBoil: 0.274
     - _ShadowDarkness: 0.15
-    - _ShadowLightInfluence: 0.747
-    - _ShadowSoftness: 0.052
+    - _ShadowLightInfluence: 0.897
+    - _ShadowSoftness: 0.48
     - _ShadowStrength: 0.6
-    - _ShadowThreshold: 0.5
-    - _SkinStrength: 0.925
+    - _ShadowThreshold: 0.342
+    - _SkinStrength: 0
     - _Smoothness: 0.022727251
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -183,8 +198,9 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
     - _EyeColor: {r: 1, g: 1, b: 1, a: 1}
+    - _FootShadowColor: {r: 0.35089493, g: 0.1496529, b: 0.5566038, a: 1}
     - _HairColor: {r: 1, g: 1, b: 1, a: 1}
-    - _RimColor: {r: 1, g: 0.65999997, b: 0.65999997, a: 1}
+    - _RimColor: {r: 1, g: 0.2509804, b: 0, a: 1}
     - _ShadowColor: {r: 0.62, g: 0.6, b: 0.86, a: 1}
     - _ShadowColorB: {r: 0.8, g: 0.61, b: 0.76, a: 1}
     - _SkinColor: {r: 1, g: 1, b: 1, a: 1}
