@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b7c3382fb8328a0429b7d45ce7096f0a
+guid: 50985cf0f14438f46a629e6c05128c8f
 ModelImporter:
   serializedVersion: 24501
   internalIDToNameTable: []
@@ -7,13 +7,33 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Material.002
-    second: {fileID: 2100000, guid: 3782b9545a3ef9c4ab900797c2c0addb, type: 2}
+      name: Material.001
+    second: {fileID: 2100000, guid: 5055ce5baca38fe47b75742789c7eea7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Temp
+    second: {fileID: 2100000, guid: 05d95480f2e615747806a196e43eb513, type: 2}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
-      name: AmeliaSkin
-    second: {fileID: 2800000, guid: da3dd6478ac9ccc42b85f2ff44f17fbe, type: 3}
+      name: AstronautaNormals3
+    second: {fileID: 2800000, guid: e11614c684c68624abfce3e705d2f0f4, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: RoughnessMap
+    second: {fileID: 2800000, guid: aeb89c0ebb64acc48bbbc9238ee0f74d, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: SkinAstronauta
+    second: {fileID: 2800000, guid: 709cf4fee7b1a86428d90fea6ff2000a, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: SkinAstronauta2
+    second: {fileID: 2800000, guid: fc36e452fa7e1154a8eeea845c0ebc7c, type: 3}
   materials:
     materialImportMode: 2
     materialName: 0
