@@ -41,7 +41,8 @@ float bhFbm(float3 p, int octaves, float roughness, float distortion)
 
 void BlackHoleNoise_float(float3 C, out float N)
 {
-    N = lerp(bhFbm(C * 3.2, 5, 0.66, 2.6), bhFbm(C * 11, 4, 0.7, 3.5), 0.4);
+    // smoother: fewer/weaker detail octaves and less of the fine layer
+    N = lerp(bhFbm(C * 3.2, 4, 0.5, 2.2), bhFbm(C * 7, 3, 0.5, 2.5), 0.2);
 }
 
 // Position on the disc like Blender's Generated coordinates: centre and size from the renderer bounds,
