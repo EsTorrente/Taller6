@@ -379,7 +379,7 @@ ModelImporter:
   meshes:
     lODScreenPercentages: []
     globalScale: 1
-    meshCompression: 0
+    meshCompression: 3
     addColliders: 0
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
@@ -401,7 +401,7 @@ ModelImporter:
     maxBonesPerVertex: 4
     minBoneWeight: 0.001
     optimizeBones: 1
-    generateMeshLods: 0
+    generateMeshLods: 1
     meshLodGenerationFlags: 0
     maximumMeshLod: -1
     importUVs: -1

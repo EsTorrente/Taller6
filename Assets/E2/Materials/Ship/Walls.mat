@@ -21,18 +21,18 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Walls
-  m_Shader: {fileID: 4800000, guid: 5587a49448a22dc4e92e6480e4a8ff71, type: 3}
+  m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
-  m_InvalidKeywords:
-  - _BOILSTEPPED_ON
+  m_ValidKeywords:
   - _NORMALMAP
+  m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
+  m_CustomRenderQueue: 2000
+  stringTagMap:
+    RenderType: Opaque
   disabledShaderPasses:
   - MOTIONVECTORS
   m_LockedProperties: 
@@ -114,13 +114,13 @@ Material:
     - _BrushScale: 4
     - _BrushSpace: 0
     - _BrushStrength: 0.6
-    - _BumpScale: 2.13
+    - _BumpScale: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
     - _Cull: 2
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
-    - _DetailLight: 2
+    - _DetailLight: 1.68
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _DstBlendAlpha: 0
@@ -139,12 +139,13 @@ Material:
     - _FootShadowStrength: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.6127273
+    - _GlossinessSource: 0
     - _GlossyReflections: 1
     - _Granulation: 0.021
     - _GranuleScale: 9
     - _InnerEdgeWidth: 0
-    - _LightIntensity: 1.225
-    - _Metallic: 1
+    - _LightIntensity: 1.6
+    - _Metallic: 0.724
     - _Mode: 0
     - _NoNormalMap: 0
     - _NoSpecular: 0
@@ -170,11 +171,14 @@ Material:
     - _ShadowBoil: 0.274
     - _ShadowDarkness: 0.8
     - _ShadowLightInfluence: 0.383
-    - _ShadowSoftness: 0
+    - _ShadowSoftness: 0.098
     - _ShadowStrength: 0.911
-    - _ShadowThreshold: 0
-    - _Smoothness: 0.6127273
+    - _ShadowThreshold: 0.574
+    - _Shininess: 0
+    - _Smoothness: 0.507
+    - _SmoothnessSource: 0
     - _SmoothnessTextureChannel: 0
+    - _SpecSource: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
