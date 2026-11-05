@@ -63,13 +63,18 @@ Shader "ESCENA67/LeafAutumn"
 
         // Blender Mapping node (Point): scale, rotate around Z, then move. The image uses Clip extension,
         // so anything outside 0..1 is fully transparent.
-        float4 SampleLeaf(float2 uv0, float2 uv1)
+float2 LeafUV(float2 uv0, float2 uv1)
         {
             float2 uv = lerp(uv0, uv1, _UseUV2) * _UVScale;
             float s, c;
             sincos(_UVRotation, s, c);
-            uv = float2(uv.x * c - uv.y * s, uv.x * s + uv.y * c) + _UVLocation.xy;
-            float4 tex = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, uv);
+            return float2(uv.x * c - uv.y * s, uv.x * s + uv.y * c) + _UVLocation.xy;
+        }
+
+        // uv comes from LeafUV in the vertex shader (affine, so interpolating it is exact)
+        half4 LeafSample(float2 uv)
+        {
+            half4 tex = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, uv);
             return all(uv == saturate(uv)) ? tex : 0;
         }
 
@@ -129,13 +134,17 @@ Shader "ESCENA67/LeafAutumn"
         }
 
         // Blender noise (FBM, detail 1, not normalized) on Generated coordinates -> ramp -> Color blend
-        float3 LeafColor(float3 leafRGB, float3 positionOS)
+        float2 LeafHS(float3 positionOS)
         {
             float3 gen = (float3(-positionOS.x, positionOS.y, positionOS.z) - _GenMin.xyz) / _GenSize.xyz;
             float3 q = gen * _NoiseScale;
             float fac = LeafPerlin(q) + _NoiseRoughness * LeafPerlin(q * 2);
-            float3 rampHSV = RgbToHsv(LeafRamp(fac));
-            return HsvToRgb(float3(rampHSV.xy, max(leafRGB.r, max(leafRGB.g, leafRGB.b))));
+            return RgbToHsv(LeafRamp(fac)).xy;
+        }
+
+        half3 LeafColor(float2 hs, half3 leafRGB)
+        {
+            return HsvToRgb(float3(hs, max(leafRGB.r, max(leafRGB.g, leafRGB.b))));
         }
         ENDHLSL
 
@@ -149,12 +158,16 @@ Shader "ESCENA67/LeafAutumn"
             #pragma fragment frag
             #pragma multi_compile_instancing
             #pragma multi_compile_fog
-            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
-            #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
-            #pragma multi_compile_fragment _ _ADDITIONAL_LIGHT_SHADOWS
+            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE
+            #pragma multi_compile _ _ADDITIONAL_LIGHTS
             #pragma multi_compile _ _CLUSTER_LIGHT_LOOP
-            #pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
+            #pragma multi_compile_fragment _ _SHADOWS_SOFT
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+
+            // Enabled: computes the autumn colour (noise + ramp) per vertex instead of per pixel: much cheaper. Comment the define out for exact per-pixel colour.
+            // Note:
+            // but the colour variation is then interpolated between vertices (fine for small leaf cards, coarse for big meshes)
+            #define LEAF_COLOR_PER_VERTEX
 
             struct Attributes
             {
@@ -168,11 +181,15 @@ Shader "ESCENA67/LeafAutumn"
             struct Varyings
             {
                 float4 positionCS : SV_POSITION;
-                float4 uv : TEXCOORD0;
+                float2 uv : TEXCOORD0;
                 float3 positionWS : TEXCOORD1;
-                float3 normalWS : TEXCOORD2;
+                half3 normalWS : TEXCOORD2;
+                #if defined(LEAF_COLOR_PER_VERTEX)
+                float2 hs : TEXCOORD3;
+                #else
                 float3 positionOS : TEXCOORD3;
-                float fogCoord : TEXCOORD4;
+                #endif
+                half fogCoord : TEXCOORD4;
                 UNITY_VERTEX_OUTPUT_STEREO
             };
 
@@ -184,8 +201,12 @@ Shader "ESCENA67/LeafAutumn"
                 o.positionWS = TransformObjectToWorld(v.positionOS.xyz);
                 o.positionCS = TransformWorldToHClip(o.positionWS);
                 o.normalWS = TransformObjectToWorldNormal(v.normalOS);
+                #if defined(LEAF_COLOR_PER_VERTEX)
+                o.hs = LeafHS(v.positionOS.xyz);
+                #else
                 o.positionOS = v.positionOS.xyz;
-                o.uv = float4(v.uv0, v.uv1);
+                #endif
+                o.uv = LeafUV(v.uv0, v.uv1);
                 o.fogCoord = ComputeFogFactor(o.positionCS.z);
                 return o;
             }
@@ -193,42 +214,40 @@ Shader "ESCENA67/LeafAutumn"
             half4 frag(Varyings i, FRONT_FACE_TYPE frontFace : FRONT_FACE_SEMANTIC) : SV_Target
             {
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
-                float4 leaf = SampleLeaf(i.uv.xy, i.uv.zw);
+                half4 leaf = LeafSample(i.uv);
                 clip(leaf.a - _Cutoff);
-                float3 baseColor = LeafColor(leaf.rgb, i.positionOS);
-                float3 n = normalize(IS_FRONT_VFACE(frontFace, i.normalWS, -i.normalWS));
-
-                InputData inputData = (InputData)0;
-                inputData.positionWS = i.positionWS;
-                inputData.normalWS = n;
-                inputData.viewDirectionWS = SafeNormalize(GetWorldSpaceViewDir(i.positionWS));
-                inputData.shadowCoord = TransformWorldToShadowCoord(i.positionWS);
-                inputData.fogCoord = i.fogCoord;
-                inputData.bakedGI = SampleSH(n);
-                inputData.normalizedScreenSpaceUV = GetNormalizedScreenSpaceUV(i.positionCS);
-                inputData.shadowMask = half4(1, 1, 1, 1);
-
-                SurfaceData surface = (SurfaceData)0;
-                surface.albedo = baseColor;
-                surface.smoothness = 1 - _Roughness;
-                surface.occlusion = 1;
-                surface.alpha = 1;
-                float3 principled = UniversalFragmentPBR(inputData, surface).rgb;
-
-                // Translucent BSDF: light arriving from the other side of the leaf
-                Light mainLight = GetMainLight(inputData.shadowCoord);
-                float3 through = mainLight.color * mainLight.distanceAttenuation * mainLight.shadowAttenuation * saturate(dot(-n, mainLight.direction));
-                #if defined(_ADDITIONAL_LIGHTS)
-                uint lightCount = GetAdditionalLightsCount();
-                LIGHT_LOOP_BEGIN(lightCount)
-                    Light light = GetAdditionalLight(lightIndex, i.positionWS);
-                    through += light.color * light.distanceAttenuation * light.shadowAttenuation * saturate(dot(-n, light.direction));
-                LIGHT_LOOP_END
+                #if defined(LEAF_COLOR_PER_VERTEX)
+                half3 baseColor = LeafColor(i.hs, leaf.rgb);
+                #else
+                half3 baseColor = LeafColor(LeafHS(i.positionOS), leaf.rgb);
                 #endif
-                float3 translucent = baseColor * _TranslucentValue * (through + SampleSH(-n));
+                half3 n = normalize(IS_FRONT_VFACE(frontFace, i.normalWS, -i.normalWS));
 
-                float3 surfaceColor = lerp(principled, translucent, _TranslucentMix);
-                float3 color = lerp(baseColor * _EmissionStrength, surfaceColor, _SurfaceMix);
+                // Lambert front (principled) and back (translucent) light in one pass over the lights.
+                // The emission term dominates this material, so full PBR specular isn't worth its cost on Quest.
+                Light mainLight = GetMainLight(TransformWorldToShadowCoord(i.positionWS));
+                half3 lightMain = mainLight.color * (mainLight.distanceAttenuation * mainLight.shadowAttenuation);
+                half nl = dot(n, mainLight.direction);
+                half3 front = SampleSH(n) + lightMain * saturate(nl);
+                half3 back = SampleSH(-n) + lightMain * saturate(-nl);
+                #if defined(_ADDITIONAL_LIGHTS)
+                {
+                    InputData inputData = (InputData)0;
+                    inputData.positionWS = i.positionWS;
+                    inputData.normalizedScreenSpaceUV = GetNormalizedScreenSpaceUV(i.positionCS);
+                    uint lightCount = GetAdditionalLightsCount();
+                    LIGHT_LOOP_BEGIN(lightCount)
+                        Light l = GetAdditionalLight(lightIndex, i.positionWS);
+                        half3 lc = l.color * l.distanceAttenuation;
+                        half ln = dot(n, l.direction);
+                        front += lc * saturate(ln);
+                        back += lc * saturate(-ln);
+                    LIGHT_LOOP_END
+                }
+                #endif
+
+                half3 diffuse = lerp(front, back * _TranslucentValue, _TranslucentMix);
+                half3 color = baseColor * lerp((half)_EmissionStrength, diffuse, (half)_SurfaceMix);
                 return half4(MixFog(color, i.fogCoord), 1);
             }
             ENDHLSL
@@ -251,7 +270,7 @@ Shader "ESCENA67/LeafAutumn"
             float3 _LightPosition;
 
             struct Attributes { float4 positionOS : POSITION; float3 normalOS : NORMAL; float2 uv0 : TEXCOORD0; float2 uv1 : TEXCOORD1; UNITY_VERTEX_INPUT_INSTANCE_ID };
-            struct Varyings { float4 positionCS : SV_POSITION; float4 uv : TEXCOORD0; };
+            struct Varyings { float4 positionCS : SV_POSITION; float2 uv : TEXCOORD0; };
 
             Varyings vert(Attributes v)
             {
@@ -270,13 +289,13 @@ Shader "ESCENA67/LeafAutumn"
                 #else
                 o.positionCS.z = max(o.positionCS.z, UNITY_NEAR_CLIP_VALUE);
                 #endif
-                o.uv = float4(v.uv0, v.uv1);
+                o.uv = LeafUV(v.uv0, v.uv1);
                 return o;
             }
 
             half4 frag(Varyings i) : SV_Target
             {
-                clip(SampleLeaf(i.uv.xy, i.uv.zw).a - _Cutoff);
+                clip(LeafSample(i.uv).a - _Cutoff);
                 return 0;
             }
             ENDHLSL
@@ -294,7 +313,7 @@ Shader "ESCENA67/LeafAutumn"
             #pragma multi_compile_instancing
 
             struct Attributes { float4 positionOS : POSITION; float2 uv0 : TEXCOORD0; float2 uv1 : TEXCOORD1; UNITY_VERTEX_INPUT_INSTANCE_ID };
-            struct Varyings { float4 positionCS : SV_POSITION; float4 uv : TEXCOORD0; UNITY_VERTEX_OUTPUT_STEREO };
+            struct Varyings { float4 positionCS : SV_POSITION; float2 uv : TEXCOORD0; UNITY_VERTEX_OUTPUT_STEREO };
 
             Varyings vert(Attributes v)
             {
@@ -302,14 +321,14 @@ Shader "ESCENA67/LeafAutumn"
                 UNITY_SETUP_INSTANCE_ID(v);
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
                 o.positionCS = TransformObjectToHClip(v.positionOS.xyz);
-                o.uv = float4(v.uv0, v.uv1);
+                o.uv = LeafUV(v.uv0, v.uv1);
                 return o;
             }
 
             half4 frag(Varyings i) : SV_Target
             {
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
-                clip(SampleLeaf(i.uv.xy, i.uv.zw).a - _Cutoff);
+                clip(LeafSample(i.uv).a - _Cutoff);
                 return 0;
             }
             ENDHLSL

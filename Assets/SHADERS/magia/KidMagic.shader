@@ -76,11 +76,10 @@ Shader "ESCENA67/KidMagic"
             #pragma fragment frag
             #pragma multi_compile_instancing
             #pragma multi_compile_fog
-            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
-            #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
-            #pragma multi_compile_fragment _ _ADDITIONAL_LIGHT_SHADOWS
+            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE
+            #pragma multi_compile _ _ADDITIONAL_LIGHTS
             #pragma multi_compile _ _CLUSTER_LIGHT_LOOP
-            #pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
+            #pragma multi_compile_fragment _ _SHADOWS_SOFT
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
             struct Varyings
@@ -89,7 +88,8 @@ Shader "ESCENA67/KidMagic"
                 float2 uv : TEXCOORD0;
                 float3 positionWS : TEXCOORD1;
                 float3 normalWS : TEXCOORD2;
-                float fogCoord : TEXCOORD3;
+                float3 magicP : TEXCOORD3; // noise-space position, interpolated
+                half fogCoord : TEXCOORD4;
                 UNITY_VERTEX_OUTPUT_STEREO
             };
 
@@ -102,6 +102,7 @@ Shader "ESCENA67/KidMagic"
                 o.positionCS = TransformWorldToHClip(o.positionWS);
                 o.normalWS = TransformObjectToWorldNormal(v.normalOS);
                 o.uv = TRANSFORM_TEX(v.uv, _BaseMap);
+                o.magicP = MagicPoint(o.positionWS);
                 o.fogCoord = ComputeFogFactor(o.positionCS.z);
                 return o;
             }
@@ -109,79 +110,32 @@ Shader "ESCENA67/KidMagic"
             half4 frag(Varyings i, FRONT_FACE_TYPE frontFace : FRONT_FACE_SEMANTIC) : SV_Target
             {
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
-                float4 tex = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, i.uv);
+                half4 tex = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, i.uv);
                 clip(tex.a - _Cutoff);
-                MagicDissolveData magic = MagicDissolve(i.positionWS);
+                MagicDissolveData magic = MagicDissolveP(i.magicP);
                 MagicClip(magic, i.positionCS.xy);
 
-                float3 n = normalize(IS_FRONT_VFACE(frontFace, i.normalWS, -i.normalWS));
-                InputData inputData = (InputData)0;
-                inputData.positionWS = i.positionWS;
-                inputData.normalWS = n;
-                inputData.viewDirectionWS = SafeNormalize(GetWorldSpaceViewDir(i.positionWS));
-                inputData.shadowCoord = TransformWorldToShadowCoord(i.positionWS);
-                inputData.fogCoord = i.fogCoord;
-                inputData.bakedGI = SampleSH(n);
-                inputData.normalizedScreenSpaceUV = GetNormalizedScreenSpaceUV(i.positionCS);
-                inputData.shadowMask = half4(1, 1, 1, 1);
-
-                SurfaceData surface = (SurfaceData)0;
-                surface.albedo = tex.rgb;
-                surface.smoothness = 1 - _Roughness;
-                surface.occlusion = 1;
-                surface.alpha = 1;
-                float3 lit = UniversalFragmentPBR(inputData, surface).rgb;
+                // Lambert instead of full PBR: the result is blended 60% towards the unlit texture anyway
+                half3 n = normalize(IS_FRONT_VFACE(frontFace, i.normalWS, -i.normalWS));
+                float4 shadowCoord = TransformWorldToShadowCoord(i.positionWS);
+                Light mainLight = GetMainLight(shadowCoord);
+                half3 light = SampleSH(n) + mainLight.color * (saturate(dot(n, mainLight.direction)) * mainLight.shadowAttenuation);
+                #if defined(_ADDITIONAL_LIGHTS)
+                {
+                    InputData inputData = (InputData)0;
+                    inputData.positionWS = i.positionWS;
+                    inputData.normalizedScreenSpaceUV = GetNormalizedScreenSpaceUV(i.positionCS);
+                    uint pixelLightCount = GetAdditionalLightsCount();
+                    LIGHT_LOOP_BEGIN(pixelLightCount)
+                        Light l = GetAdditionalLight(lightIndex, i.positionWS);
+                        light += l.color * (saturate(dot(n, l.direction)) * l.distanceAttenuation);
+                    LIGHT_LOOP_END
+                }
+                #endif
+                half3 lit = tex.rgb * light;
                 // the scene lights are dim and orange; blend towards the painted texture so it reads as painted
-                float3 color = lerp(lit, tex.rgb, _Unlit) * _Brightness + magic.glow;
+                half3 color = lerp(lit, tex.rgb, _Unlit) * _Brightness + magic.glow;
                 return half4(MixFog(color, i.fogCoord), 1);
-            }
-            ENDHLSL
-        }
-
-        Pass
-        {
-            Name "ShadowCaster"
-            Tags { "LightMode"="ShadowCaster" }
-            ColorMask 0
-
-            HLSLPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
-            #pragma multi_compile_instancing
-            #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
-
-            float3 _LightDirection;
-            float3 _LightPosition;
-
-            struct Varyings { float4 positionCS : SV_POSITION; float2 uv : TEXCOORD0; float3 positionWS : TEXCOORD1; };
-
-            Varyings vert(Attributes v)
-            {
-                Varyings o;
-                UNITY_SETUP_INSTANCE_ID(v);
-                o.positionWS = TransformObjectToWorld(v.positionOS.xyz);
-                float3 nWS = TransformObjectToWorldNormal(v.normalOS);
-                #if defined(_CASTING_PUNCTUAL_LIGHT_SHADOW)
-                float3 lightDir = normalize(_LightPosition - o.positionWS);
-                #else
-                float3 lightDir = _LightDirection;
-                #endif
-                o.positionCS = TransformWorldToHClip(ApplyShadowBias(o.positionWS, nWS, lightDir));
-                #if UNITY_REVERSED_Z
-                o.positionCS.z = min(o.positionCS.z, UNITY_NEAR_CLIP_VALUE);
-                #else
-                o.positionCS.z = max(o.positionCS.z, UNITY_NEAR_CLIP_VALUE);
-                #endif
-                o.uv = TRANSFORM_TEX(v.uv, _BaseMap);
-                return o;
-            }
-
-            half4 frag(Varyings i) : SV_Target
-            {
-                clip(SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, i.uv).a - _Cutoff);
-                MagicClip(MagicDissolve(i.positionWS), i.positionCS.xy);
-                return 0;
             }
             ENDHLSL
         }
@@ -197,15 +151,16 @@ Shader "ESCENA67/KidMagic"
             #pragma fragment frag
             #pragma multi_compile_instancing
 
-            struct Varyings { float4 positionCS : SV_POSITION; float2 uv : TEXCOORD0; float3 positionWS : TEXCOORD1; UNITY_VERTEX_OUTPUT_STEREO };
+            struct Varyings { float4 positionCS : SV_POSITION; float2 uv : TEXCOORD0; float3 magicP : TEXCOORD1; UNITY_VERTEX_OUTPUT_STEREO };
 
             Varyings vert(Attributes v)
             {
                 Varyings o;
                 UNITY_SETUP_INSTANCE_ID(v);
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
-                o.positionWS = TransformObjectToWorld(v.positionOS.xyz);
-                o.positionCS = TransformWorldToHClip(o.positionWS);
+                float3 positionWS = TransformObjectToWorld(v.positionOS.xyz);
+                o.positionCS = TransformWorldToHClip(positionWS);
+                o.magicP = MagicPoint(positionWS);
                 o.uv = TRANSFORM_TEX(v.uv, _BaseMap);
                 return o;
             }
@@ -214,7 +169,7 @@ Shader "ESCENA67/KidMagic"
             {
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
                 clip(SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, i.uv).a - _Cutoff);
-                MagicClip(MagicDissolve(i.positionWS), i.positionCS.xy);
+                MagicClip(MagicDissolveP(i.magicP), i.positionCS.xy);
                 return 0;
             }
             ENDHLSL

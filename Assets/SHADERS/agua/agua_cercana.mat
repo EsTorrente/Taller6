@@ -38,32 +38,54 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _AlphaClip: 0
+    - _AlphaToMask: 0
+    - _Blend: 0
+    - _BlendModePreserveSpecular: 0
+    - _CastShadows: 1
     - _ContactAmount: 0.6
     - _ContactDepth: 0.12
     - _ContactLife: 0.9
     - _ContactRate: 3
     - _ContactSize: 0.3
     - _ContactWidth: 0.015
+    - _Cull: 2
+    - _DstBlend: 10
+    - _DstBlendAlpha: 10
     - _FadeEnd: 51.6
     - _FadeStart: 37.5
     - _Gate: 0
-    - _HazeStrength: 1.55
+    - _HazeStrength: 0.37
+    - _Normal_Strength: 0
     - _Opacity: 0.9
     - _QueueControl: 0
     - _QueueOffset: 0
+    - _ReceiveShadows: 1
     - _ReflectStrength: 1
+    - _Refraction_Strength: 0
     - _RippleScale: 4.26
     - _RippleSpeed: 1.78
     - _RippleStrength: 0.55
-    - _SceneReflection: 0.8
+    - _SceneReflection: 0.985
     - _SceneReflectionDistance: 10
+    - _Second_Speed: 0
+    - _Speed: 0
+    - _SrcBlend: 5
+    - _SrcBlendAlpha: 1
+    - _Surface: 1
+    - _WorkflowMode: 1
+    - _XRMotionVectorsPass: 1
+    - _ZTest: 4
+    - _ZWrite: 0
+    - _ZWriteControl: 0
     m_Colors:
     - _ContactColor: {r: 1, g: 0.86, b: 0.7, a: 1}
-    - _HazeAfter: {r: 0.8962264, g: 0.69612974, b: 0.4185208, a: 1}
-    - _HazeBefore: {r: 0.08624065, g: 0.10854568, b: 0.3207547, a: 1}
-    - _ReflectTint: {r: 0.55998576, g: 0.8039961, b: 0.9811321, a: 1}
-    - _SkyFallbackColor: {r: 0.402, g: 0.256, b: 0.237, a: 1}
-    - _WaterColor: {r: 0.20906019, g: 0.32022876, b: 0.509434, a: 1}
+    - _HazeAfter: {r: 1, g: 0.58196723, b: 0, a: 1}
+    - _HazeBefore: {r: 0.745283, g: 0.5026816, b: 0, a: 1}
+    - _ReflectTint: {r: 0.19339621, g: 0.89914834, b: 1, a: 1}
+    - _SkyFallbackColor: {r: 0.764151, g: 0.16172282, b: 0.111739054, a: 1}
+    - _Tiling: {r: 0, g: 0, b: 0, a: 0}
+    - _WaterColor: {r: 0, g: 0.3556552, b: 0.3773585, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &7342653489833424659

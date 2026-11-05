@@ -1,11 +1,10 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Rendering;
 
-// Drives the magic appear / disappear (ESCENA67/KidMagic, ESCENA67/LightFigureMagic) from the animated
-// KidChange and CharactersChange empties, the way the Blender drivers do. Runs in edit mode too,
-// so scrubbing the Timeline shows the effect.
+// Drives the magic appear / disappear with cached random lookups and reduced per-frame allocations.
 [ExecuteAlways]
 public class MagicDissolveDriver : MonoBehaviour
 {
@@ -18,17 +17,12 @@ public class MagicDissolveDriver : MonoBehaviour
     [Serializable]
     public class Kid
     {
-        [Tooltip("Texture Coordinate > Object in Blender (rig_toddler / rig_toddler.001)")]
         public Transform space;
-        [Tooltip("Empty whose Blender Y moves the cut (KidChange)")]
         public Transform controller;
         public Renderer[] renderers;
-        [Tooltip("Blender Mapping Location X of this kid's material (both kids share one material in Unity)")]
         public float mappingX;
-        [Tooltip("Driver: Mapping X -= travel * clamp(KidChange Y / fullY)")]
         public float travel = 1.3f;
         public float fullY = 1.5664f;
-        [Tooltip("This kid only reacts before (off) or after (on) the gate frame")]
         public float gateFrame = 1250f;
         public bool afterGate;
     }
@@ -36,12 +30,9 @@ public class MagicDissolveDriver : MonoBehaviour
     [Serializable]
     public class Figures
     {
-        [Tooltip("Texture Coordinate > Object in Blender (CharactersChange)")]
         public Transform space;
         public Renderer[] renderers;
-        [Tooltip("Object Info > Random is mapped to 0..maxOffset")]
         public float maxOffset = 0.8f;
-        [Tooltip("CharactersChange height (Blender Z) mapped to +1 .. -1 for the per-figure offset")]
         public Vector2 heightRange = new Vector2(8f, 12f);
     }
 
@@ -54,11 +45,34 @@ public class MagicDissolveDriver : MonoBehaviour
     static readonly int GradientOffsetId = Shader.PropertyToID("_MagicGradientOffset");
 
     MaterialPropertyBlock block;
+    Dictionary<Renderer, float> figureRandoms = new Dictionary<Renderer, float>();
 
-    void OnEnable() => RenderPipelineManager.beginContextRendering += Apply;
-    void OnDisable() => RenderPipelineManager.beginContextRendering -= Apply;
+    void OnEnable()
+    {
+        RenderPipelineManager.beginContextRendering += Apply;
+        CacheRandoms();
+    }
 
-    // The empties are direct children of ESCENA67_ROOT, whose space is Blender's world with x flipped
+    void OnDisable()
+    {
+        RenderPipelineManager.beginContextRendering -= Apply;
+    }
+
+    void CacheRandoms()
+    {
+        figureRandoms.Clear();
+        if (figures != null && figures.renderers != null)
+        {
+            foreach (var r in figures.renderers)
+            {
+                if (r && !figureRandoms.ContainsKey(r))
+                {
+                    figureRandoms[r] = Random01(r.name);
+                }
+            }
+        }
+    }
+
     static Vector3 BlenderPosition(Transform t) => Vector3.Scale(t.localPosition, new Vector3(-1f, 1f, 1f));
 
     void Apply(ScriptableRenderContext context, System.Collections.Generic.List<Camera> cameras)
@@ -84,7 +98,13 @@ public class MagicDissolveDriver : MonoBehaviour
             float height = BlenderPosition(figures.space).z;
             float phase = Mathf.Lerp(1f, -1f, Mathf.InverseLerp(figures.heightRange.x, figures.heightRange.y, height));
             foreach (var r in figures.renderers)
-                if (r) Set(r, figures.space, Vector4.zero, Random01(r.name) * figures.maxOffset * phase);
+            {
+                if (r)
+                {
+                    float randVal = figureRandoms.TryGetValue(r, out var val) ? val : 0.5f;
+                    Set(r, figures.space, Vector4.zero, randVal * figures.maxOffset * phase);
+                }
+            }
         }
     }
 
@@ -98,7 +118,6 @@ public class MagicDissolveDriver : MonoBehaviour
         r.SetPropertyBlock(block);
     }
 
-    // Stands in for Blender's Object Info > Random: fixed per object name
     static float Random01(string s)
     {
         uint h = 2166136261u;

@@ -11,10 +11,10 @@ Material:
   m_Shader: {fileID: 4800000, guid: 43ee671e67394747aa4e477285a063bd, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords:
-  - _RECEIVE_SHADOWS_OFF
+  m_ValidKeywords: []
   m_InvalidKeywords:
   - _RECEIVESHADOWS_OFF
+  - _RECEIVE_SHADOWS_OFF
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -95,12 +95,26 @@ Material:
     - _FresnelEmissionIntensity: 34.7
     - _FresnelHueShift: 0
     - _FresnelInvert: 0
+    - _FresnelPerPixel: 0
     - _FresnelPower: 5
     - _FresnelScale: 1
     - _GalaxyBaseColorIntensity: 0
     - _GalaxyEmissionIntensity: 4.98
     - _GalaxyHueShift: 0
     - _GalaxySaturationShift: -0.2
+    - _MagicGlowNoiseDetail: 2
+    - _MagicGlowNoiseScale: 4
+    - _MagicGlowStrength: 14
+    - _MagicNoiseDetail: 4
+    - _MagicNoiseMix: 0.45
+    - _MagicNoiseRoughness: 0.5
+    - _MagicNoiseScale: 10
+    - _MagicNoiseW: 19.7083
+    - _MagicNoiseWPerFrame: 0
+    - _MagicSparkleDetail: 2
+    - _MagicSparkleScale: 60
+    - _MagicSparkleW: 0
+    - _MagicSparkleWPerFrame: 0
     - _Metallic: 0
     - _QueueControl: 0
     - _QueueOffset: 0
@@ -108,6 +122,7 @@ Material:
     - _Smoothness: 0
     - _SpecularHighlights: 1
     - _StarsDistortion: 0.05
+    - _StarsDistortionEnable: 0
     - _StarsEmMult: 333
     - _StarsEmissionIntensity: 333
     - _StarsHueShift: 0
@@ -122,6 +137,15 @@ Material:
     - _FrColor: {r: 0, g: 0.6859784, b: 1, a: 0}
     - _FresnelColor: {r: 1, g: 0.47363988, b: 0.11792451, a: 0}
     - _GalaxyTint: {r: 1, g: 0.41291898, b: 0, a: 0}
+    - _MagicCut: {r: 0.5, g: 0.536, b: 0, a: 0}
+    - _MagicEdge: {r: 0.4, g: 0.515, b: 0.6, a: 0}
+    - _MagicGlowColorA: {r: 1, g: 0.9226011, b: 0.7688679, a: 1}
+    - _MagicGlowColorB: {r: 1, g: 0.8063, b: 0.12309996, a: 1}
+    - _MagicGlowColorRamp: {r: 0.3, g: 0.7, b: 0, a: 0}
+    - _MagicMapLocation: {r: 0.3, g: 0, b: 0, a: 0}
+    - _MagicMapRotation: {r: 0, g: 1.5708, b: 0, a: 0}
+    - _MagicMapScale: {r: 1, g: 1, b: 1, a: 0}
+    - _MagicSparkleRamp: {r: 0.45, g: 0.75, b: 0.35, a: 3}
     - _StarsColor: {r: 0, g: 0.94070315, b: 1, a: 0}
     - _StarsColor01: {r: 1, g: 0.17565282, b: 0, a: 0}
     - _StarsColor02: {r: 1, g: 0.8777145, b: 0, a: 0}

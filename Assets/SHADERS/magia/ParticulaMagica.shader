@@ -31,7 +31,7 @@ Shader "ESCENA67/ParticulaMagica"
             CBUFFER_END
 
             struct Attributes { float4 positionOS : POSITION; float4 color : COLOR; float2 uv : TEXCOORD0; UNITY_VERTEX_INPUT_INSTANCE_ID };
-            struct Varyings { float4 positionCS : SV_POSITION; float4 color : COLOR; float2 uv : TEXCOORD0; UNITY_VERTEX_OUTPUT_STEREO };
+            struct Varyings { float4 positionCS : SV_POSITION; half3 tint : COLOR; float2 uv : TEXCOORD0; UNITY_VERTEX_OUTPUT_STEREO };
 
             Varyings vert(Attributes v)
             {
@@ -39,7 +39,7 @@ Shader "ESCENA67/ParticulaMagica"
                 UNITY_SETUP_INSTANCE_ID(v);
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
                 o.positionCS = TransformObjectToHClip(v.positionOS.xyz);
-                o.color = v.color;
+                o.tint = v.color.rgb * _Color.rgb * (_Intensity * v.color.a); // per vertex, not per pixel
                 o.uv = v.uv;
                 return o;
             }
@@ -47,9 +47,8 @@ Shader "ESCENA67/ParticulaMagica"
             half4 frag(Varyings i) : SV_Target
             {
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
-                float glow = saturate(1 - length(i.uv * 2 - 1));
-                glow *= glow;
-                return half4(i.color.rgb * _Color.rgb * (_Intensity * glow * i.color.a), 0);
+                half glow = saturate(1 - length(i.uv * 2 - 1));
+                return half4(i.tint * (glow * glow), 0);
             }
             ENDHLSL
         }
