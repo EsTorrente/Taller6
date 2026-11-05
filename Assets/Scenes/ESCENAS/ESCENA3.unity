@@ -948,7 +948,19 @@ VisualEffect:
         m_Name: Distortion Strength
         m_Overridden: 1
     m_Vector2f:
-      m_Array: []
+      m_Array:
+      - m_Value: {x: -0.1, y: -0.2}
+        m_Name: Shards Speed
+        m_Overridden: 0
+      - m_Value: {x: 1, y: 3}
+        m_Name: Shards Tiling
+        m_Overridden: 0
+      - m_Value: {x: -0.15, y: -0.3}
+        m_Name: Swirl Speed
+        m_Overridden: 0
+      - m_Value: {x: 1, y: 3}
+        m_Name: Swirl Tiling
+        m_Overridden: 0
     m_Vector3f:
       m_Array: []
     m_Vector4f:
