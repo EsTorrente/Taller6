@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/ESCENAS/ESCENA67.unity
     guid: 8d0247568b202a94eb1f5f9a9001fd16
   - enabled: 1
+    path: Assets/Scenes/FinalScenes/E1.unity
+    guid: af5acf9c97faa99459790c0f8c0e383d
+  - enabled: 1
     path: Assets/Scenes/CharacterCustom.unity
     guid: 6d4fe36132a898e4f8301e1a2fce4d7c
   - enabled: 1

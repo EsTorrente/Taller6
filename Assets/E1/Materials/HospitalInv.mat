@@ -21,17 +21,17 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: HospitalInv
-  m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
+  m_Shader: {fileID: 4800000, guid: 5587a49448a22dc4e92e6480e4a8ff71, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - _NO_NORMALMAP
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 1
   m_CustomRenderQueue: -1
-  stringTagMap:
-    RenderType: Opaque
+  stringTagMap: {}
   disabledShaderPasses:
   - MOTIONVECTORS
   m_LockedProperties: 
@@ -40,6 +40,10 @@ Material:
     m_TexEnvs:
     - _BaseMap:
         m_Texture: {fileID: 2800000, guid: 65c8cf39713387943a7aac080fd5442b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BrushAtlas:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -99,33 +103,82 @@ Material:
     - _AddPrecomputedVelocity: 0
     - _AlphaClip: 0
     - _AlphaToMask: 0
+    - _AmbientInfluence: 0.848
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
+    - _BoilStepped: 1
+    - _BrushDry: 0.25
+    - _BrushPigment: 0.4
+    - _BrushRandomRotation: 0.35
+    - _BrushScale: 4
+    - _BrushSpace: 0
+    - _BrushStrength: 0.6
     - _BumpScale: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
-    - _Cull: 0
+    - _Cull: 1
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
+    - _DetailLight: 0
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _DstBlendAlpha: 0
+    - _EdgeDarkness: 0.358
+    - _EdgeIntensity: 0.521
+    - _EdgeNoiseScale: 498.2
+    - _EdgePooling: 0
+    - _EdgeSaturation: 0.279
+    - _EdgeSpeed: 4.11
+    - _EdgeWidth: 0.0023
     - _EnvironmentReflections: 1
+    - _FootRimMask: 1
+    - _FootShadowEnd: 3.35
+    - _FootShadowSpace: 1
+    - _FootShadowStart: -0.08
+    - _FootShadowStrength: 0.776
     - _GlossMapScale: 1
     - _Glossiness: 0.059090912
     - _GlossyReflections: 1
-    - _Metallic: 0
+    - _Granulation: 0.021
+    - _GranuleScale: 9
+    - _InnerEdgeWidth: 0.392
+    - _LightIntensity: 0.469
+    - _Metallic: 0.776
     - _Mode: 0
+    - _NoNormalMap: 1
+    - _NoSpecular: 0
+    - _NoiseScale: 3
+    - _NoiseWobble: 0.152
+    - _NormalInfluence: 0
     - _OcclusionStrength: 1
+    - _PaperGrain: 0
     - _Parallax: 0.02
     - _QueueOffset: 0
     - _ReceiveShadows: 1
+    - _RimIntensity: 2.26
+    - _RimLightInfluence: 1
+    - _RimLightOffset: 0
+    - _RimLightSource: 0
+    - _RimMode: 2
+    - _RimPower: 6.43
+    - _RimShadowBias: 0.03
+    - _RimShadowMask: 1
+    - _RimSoftness: 0
+    - _RimThreshold: 0.194
+    - _Roughness: 1
+    - _ShadowBoil: 0.274
+    - _ShadowDarkness: 0
+    - _ShadowLightInfluence: 1
+    - _ShadowSoftness: 0.5
+    - _ShadowStrength: 0.313
+    - _ShadowThreshold: 0.594
     - _Smoothness: 0.059090912
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
+    - _TintNoiseScale: -0.83
     - _UVSec: 0
     - _WorkflowMode: 1
     - _XRMotionVectorsPass: 1
@@ -134,6 +187,10 @@ Material:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
+    - _FootShadowColor: {r: 0, g: 0, b: 0, a: 1}
+    - _RimColor: {r: 1, g: 0.65999997, b: 0.65999997, a: 1}
+    - _ShadowColor: {r: 0.62, g: 0.6, b: 0.86, a: 1}
+    - _ShadowColorB: {r: 0.8, g: 0.61, b: 0.76, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

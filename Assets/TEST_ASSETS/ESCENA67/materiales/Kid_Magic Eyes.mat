@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Kid_Magic Eyes
+  m_Shader: {fileID: 4800000, guid: c73bd94b5dd49a348b0de8e482d87c12, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 1
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BaseMap:
+        m_Texture: {fileID: 2800000, guid: 2f4683f2beb7443881aeb97898bce7a1, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MaskMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _Brightness: 1
+    - _Cutoff: 0.5
+    - _EyeStrength: 0.923
+    - _FootRimMask: 1
+    - _FootShadowEnd: 0.5
+    - _FootShadowSpace: 0
+    - _FootShadowStart: 0
+    - _FootShadowStrength: 0
+    - _HairStrength: 0.922
+    - _LightIntensity: 0.8
+    - _MagicGlowNoiseDetail: 2
+    - _MagicGlowNoiseScale: 4
+    - _MagicGlowStrength: 10
+    - _MagicNoiseDetail: 4
+    - _MagicNoiseMix: 0.9167
+    - _MagicNoiseRoughness: 0.5
+    - _MagicNoiseScale: 10
+    - _MagicNoiseW: 0
+    - _MagicNoiseWPerFrame: 0.0208333
+    - _MagicSparkleDetail: 2
+    - _MagicSparkleScale: 60
+    - _MagicSparkleW: 0
+    - _MagicSparkleWPerFrame: 0.0833333
+    - _RimIntensity: 0.08
+    - _RimLightInfluence: 1
+    - _RimLightOffset: 0
+    - _RimLightSource: 0
+    - _RimMode: 2
+    - _RimPower: 5.56
+    - _RimShadowBias: 0.03
+    - _RimShadowMask: 1
+    - _RimSoftness: 0
+    - _RimThreshold: 0.194
+    - _Roughness: 0.5
+    - _ShadowLightInfluence: 0
+    - _ShadowSoftness: 0.029
+    - _ShadowThreshold: 0.55
+    - _SkinStrength: 0.925
+    - _Unlit: 0.6
+    m_Colors:
+    - _EyeColor: {r: 1, g: 1, b: 1, a: 1}
+    - _FootShadowColor: {r: 0, g: 0, b: 0, a: 1}
+    - _HairColor: {r: 1, g: 1, b: 1, a: 1}
+    - _MagicCut: {r: 0.5, g: 0.536, b: 0, a: 0}
+    - _MagicEdge: {r: 0.4, g: 0.515, b: 0.6, a: 0}
+    - _MagicGlowColorA: {r: 0.8227, g: 0, b: 1, a: 1}
+    - _MagicGlowColorB: {r: 1, g: 0.8063, b: 0.1231, a: 1}
+    - _MagicGlowColorRamp: {r: 0.3, g: 0.7, b: 0, a: 0}
+    - _MagicMapLocation: {r: 0, g: 0, b: 0, a: 0}
+    - _MagicMapRotation: {r: 0, g: 1.5708, b: 0, a: 0}
+    - _MagicMapScale: {r: 1, g: 1, b: 0.9524, a: 0}
+    - _MagicSparkleRamp: {r: 0.45, g: 0.75, b: 0.35, a: 3}
+    - _RimColor: {r: 1, g: 0.651, b: 0.627, a: 1}
+    - _ShadowColor: {r: 0.34099993, g: 0.38399997, b: 0.792, a: 1}
+    - _SkinColor: {r: 1, g: 1, b: 1, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

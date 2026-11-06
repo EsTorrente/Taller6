@@ -14,6 +14,9 @@ Shader "Custom/Painterly/WatercolorEnvironmentLow"
         [Normal] _BumpMap("Normal Map", 2D) = "bump" {}
         _BumpScale("Normal Strength", Range(0, 3)) = 1
 
+        [Header(Render Faces)]
+        [Enum(Front Face, 2, Back Face, 1, Both, 0)] _Cull("Render Faces", Float) = 2
+
         [Header(Fast Paths)]
         [Toggle(_NO_NORMALMAP)] _NoNormalMap("Disable Normal Map", Float) = 0
         [Toggle(_NO_SPECULAR)] _NoSpecular("Disable Specular + Reflections", Float) = 0
@@ -91,6 +94,7 @@ Shader "Custom/Painterly/WatercolorEnvironmentLow"
         {
             Name "ForwardLit"
             Tags { "LightMode"="UniversalForward" }
+            Cull [_Cull]
 
             HLSLPROGRAM
             #pragma target 3.5
@@ -177,10 +181,13 @@ Shader "Custom/Painterly/WatercolorEnvironmentLow"
                 return o;
             }
 
-            half4 frag(Varyings i) : SV_Target
+            half4 frag(Varyings i, FRONT_FACE_TYPE facing : FRONT_FACE_SEMANTIC) : SV_Target
             {
                 UNITY_SETUP_INSTANCE_ID(i);
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
+
+                // +1 on front faces, -1 on back faces (back faces are lit with a flipped normal)
+                half faceSign = IS_FRONT_VFACE(facing, 1.0h, -1.0h);
 
                 half3 albedo = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, i.uv).rgb * _BaseColor.rgb;
                 #if defined(_NO_SPECULAR)
@@ -189,13 +196,15 @@ Shader "Custom/Painterly/WatercolorEnvironmentLow"
                     half3 diffAlbedo = albedo * (1.0h - _Metallic * 0.85h);   // metals keep a little diffuse
                 #endif
 
-                half3 Ng = NormalizeNormalPerPixel(i.normalWS);
+                half3 Ng0 = NormalizeNormalPerPixel(i.normalWS);
+                half3 Ng = Ng0 * faceSign;
                 #if defined(_NO_NORMALMAP)
                     half3 Nm = Ng;
                     half3 Nshape = Ng;
                 #else
                     half3 nTS = UnpackNormalScale(SAMPLE_TEXTURE2D(_BumpMap, sampler_BumpMap, i.uv), _BumpScale);
-                    half3 B = cross(Ng, i.tangentWS.xyz) * i.tangentWS.w;
+                    nTS.z *= faceSign;
+                    half3 B = cross(Ng0, i.tangentWS.xyz) * i.tangentWS.w;
                     half3 Nm = NormalizeNormalPerPixel(mul(nTS, half3x3(i.tangentWS.xyz, B, Ng)));
                     half3 Nshape = NormalizeNormalPerPixel(lerp(Ng, Nm, _NormalInfluence));
                 #endif
@@ -310,7 +319,7 @@ Shader "Custom/Painterly/WatercolorEnvironmentLow"
             ZWrite On
             ZTest LEqual
             ColorMask 0
-            Cull Back
+            Cull [_Cull]
 
             HLSLPROGRAM
             #pragma target 3.5
@@ -364,7 +373,7 @@ Shader "Custom/Painterly/WatercolorEnvironmentLow"
             Tags { "LightMode"="DepthOnly" }
             ZWrite On
             ColorMask R
-            Cull Back
+            Cull [_Cull]
 
             HLSLPROGRAM
             #pragma target 3.5
@@ -402,7 +411,7 @@ Shader "Custom/Painterly/WatercolorEnvironmentLow"
             Name "DepthNormals"
             Tags { "LightMode"="DepthNormals" }
             ZWrite On
-            Cull Back
+            Cull [_Cull]
 
             HLSLPROGRAM
             #pragma target 3.5
