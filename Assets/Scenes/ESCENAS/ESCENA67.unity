@@ -47009,7 +47009,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1442ab20259b42f9a83e3d32c09c5c83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  butterflyPrefab: {fileID: 919132149155446097, guid: 5f98b9541dbe4419b0a6c1f7d7b5fa96, type: 3}
+  butterflyPrefab: {fileID: 457253368092803579, guid: bb45a7b699fd16d42a8f5f9e4e3c3176, type: 3}
   spawnRate: 3
   maxParticles: 25
   spawnBoxSize: {x: 5, y: 2, z: 5}
@@ -61290,6 +61290,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2083566334662023261}
+  - {fileID: 7837392019818966863}
   m_Father: {fileID: 8753217845985561490}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &5251636128673703892
@@ -64644,6 +64645,8 @@ MonoBehaviour:
     fullY: 1.5664
     gateFrame: 1250
     afterGate: 0
+    appearFrames: 0
+    appearStartFrame: 1
   - space: {fileID: 4617436483450865922}
     controller: {fileID: 3616844730459201052}
     renderers:
@@ -64665,6 +64668,8 @@ MonoBehaviour:
     fullY: 1.5664
     gateFrame: 1250
     afterGate: 1
+    appearFrames: 0
+    appearStartFrame: 1
   figures:
     space: {fileID: 7165349083103692422}
     renderers:
@@ -64688,6 +64693,7 @@ MonoBehaviour:
     - {fileID: 9119235313076740020}
     maxOffset: 0.8
     heightRange: {x: 8, y: 12}
+  groups: []
 --- !u!4 &5580448921814065532
 Transform:
   m_ObjectHideFlags: 0
@@ -88382,12 +88388,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2035550454846270984}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0.1, y: 1.3, z: -1}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0.41191322, y: -0.57474124, z: -0.5747413, w: -0.41191328}
+  m_LocalPosition: {x: -0.09999413, y: -0.5787425, z: 0.11776689}
+  m_LocalScale: {x: 1.4494143, y: 1.4494146, z: 1.4494144}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 5248842203609800949}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1 &7841898985571373154
 GameObject:
@@ -95047,6 +95053,7 @@ MonoBehaviour:
   lifetime: 1.8
   fall: 0.25
   color: {r: 1, g: 0.72, b: 0.35, a: 1}
+  figures: []
 --- !u!1 &8488869730975918005
 GameObject:
   m_ObjectHideFlags: 0
@@ -102694,7 +102701,6 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 7837392019818966863}
   - {fileID: 1935259192}
   - {fileID: 1457294493}
   - {fileID: 1080092532}
