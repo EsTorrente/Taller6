@@ -8,10 +8,11 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: aparece_cube
-  m_Shader: {fileID: 4800000, guid: c98efee4730e4b42a89c8b6597a47e95, type: 3}
+  m_Shader: {fileID: 4800000, guid: b7a11f3fd210c9f4caa3da70daca4ae9, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - _RIMTYPE_LITEDGE
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -36,6 +37,7 @@ Material:
     - _Brightness: 0.8
     - _Cutoff: 0.5
     - _EyeStrength: 0.923
+    - _FootMaskOff: 0
     - _FootRimMask: 1
     - _FootShadowEnd: 2.28
     - _FootShadowSpace: 1
@@ -56,6 +58,7 @@ Material:
     - _MagicSparkleScale: 60
     - _MagicSparkleW: 0
     - _MagicSparkleWPerFrame: 0
+    - _RimCustomLight: 0
     - _RimIntensity: 0.08
     - _RimLightInfluence: 1
     - _RimLightOffset: 0
@@ -66,6 +69,7 @@ Material:
     - _RimShadowMask: 1
     - _RimSoftness: 0
     - _RimThreshold: 0.194
+    - _RimType: 0
     - _Roughness: 0.5
     - _ShadowLightInfluence: 0
     - _ShadowSoftness: 0.121

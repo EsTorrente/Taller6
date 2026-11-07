@@ -38,6 +38,7 @@ Shader "ESCENA67/LightFigureMagic"
 		_FresnelPower("Fresnel Power", Float) = 5
 		[Toggle(_FRESNELINVERT_ON)] _FresnelInvert("Fresnel Invert", Float) = 0
 		[Toggle(_FRESNEL_PER_PIXEL)] _FresnelPerPixel("Per-Pixel Fresnel (slower, smoother on low-poly)", Float) = 0
+		[Toggle(_NO_HUE_SHIFT)] _NoHueShift("Strip hue/saturation shifts (faster; pick the colours directly instead)", Float) = 0
 		[Space(33)][Header(Reflection)][Space(13)][Toggle(_USEREFLECTIONVECTOR_ON)] _UseReflectionVector("Use Reflection Vector", Float) = 0
 
 		// ---- Magic dissolve (values are read by MagicDissolveInput.hlsl / MagicDissolve.hlsl) ----
@@ -107,6 +108,10 @@ Shader "ESCENA67/LightFigureMagic"
 			float _GalaxySaturationShift;
 			MAGIC_DISSOLVE_CBUFFER
 		CBUFFER_END
+		// Optional quality knobs of the dissolve noise (see the header of MagicDissolve.hlsl). Defaults = exact Blender noise.
+		// #define MAGIC_CUT_DETAIL 1      // fewer octaves for the cut (this figure has Noise Mix 0.45, so it is more visible than on the kids)
+		// #define MAGIC_SPARKLE_DETAIL 1
+		// #define MAGIC_FAST_NOISE        // 3D instead of 4D noise (~2x cheaper, different pattern than Blender)
 		#include "MagicDissolve.hlsl"
 		ENDHLSL
 
@@ -130,8 +135,10 @@ Shader "ESCENA67/LightFigureMagic"
 			#pragma shader_feature_local _FRESNELINVERT_ON
 			#pragma shader_feature_local _FRESNEL_PER_PIXEL
 			#pragma shader_feature_local_fragment _STARS_DISTORTION_ON
-			#include_with_pragmas "Packages/com.unity.render-pipelines.core/ShaderLibrary/FoveatedRenderingKeywords.hlsl"
-			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/FoveatedRendering.hlsl"
+			#pragma shader_feature_local_fragment _NO_HUE_SHIFT
+			// FoveatedRenderingKeywords.hlsl / FoveatedRendering.hlsl are no longer included: nothing in this shader (or in
+			// MagicClip) reads screen-space coordinates through the foveated remap, so they only doubled the variants.
+			// Add them back if you ever sample screen-space UVs here.
 
 			#if defined(_USEREFLECTIONVECTOR_ON) || defined(_FRESNEL_PER_PIXEL)
 				#define LF_NEEDS_NORMAL 1
@@ -149,20 +156,23 @@ Shader "ESCENA67/LightFigureMagic"
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
-			// 3 interpolators (was 7-9): positionCS + uv(4) + posWS/fresnel(4) + fog(1)
 			struct Varyings
 			{
 				float4 positionCS         : SV_POSITION;
 				float4 uvStarsNoise       : TEXCOORD0; // xy = stars uv (already panned), zw = noise uv (already panned)
-				float4 positionWS_fresnel : TEXCOORD1; // xyz = world pos, w = 1 - N.V (per-vertex)
+				float4 viewVec_fresnel    : TEXCOORD1; // xyz = camera - world pos (affine: exact when interpolated), w = 1 - N.V (per-vertex)
 				half   fogFactor          : TEXCOORD2;
 				#if defined(LF_NEEDS_NORMAL)
 					half3 normalWS        : TEXCOORD3;
+				#endif
+				#if !defined(_MAGICDISSOLVE_SKIP)
+					float3 magicP         : TEXCOORD4; // dissolve noise-space position, mapped per vertex (was per pixel)
 				#endif
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
+			#if !defined(_NO_HUE_SHIFT)
 			// ---- HSV helpers (only executed when a shift is actually non-zero) ----
 			float3 LF_RGBToHSV(float3 c)
 			{
@@ -186,6 +196,7 @@ Shader "ESCENA67/LightFigureMagic"
 				float3 hsv = LF_RGBToHSV(rgb);
 				return LF_HSVToRGB(float3(hsv.x + hue, hsv.y + sat, hsv.z));
 			}
+			#endif
 
 			Varyings vert(Attributes v)
 			{
@@ -204,14 +215,17 @@ Shader "ESCENA67/LightFigureMagic"
 				o.uvStarsNoise = float4(starsUV, noiseUV);
 
 				float3 normalWS = TransformObjectToWorldNormal(v.normalOS);
+				float3 viewVec = _WorldSpaceCameraPos.xyz - positionWS; // un-normalized: fine for cubemap lookup
 				#if !defined(_FRESNEL_PER_PIXEL)
-					float3 viewDirWS = normalize(_WorldSpaceCameraPos.xyz - positionWS);
-					o.positionWS_fresnel = float4(positionWS, 1.0 - dot(normalWS, viewDirWS));
+					o.viewVec_fresnel = float4(viewVec, 1.0 - dot(normalWS, normalize(viewVec)));
 				#else
-					o.positionWS_fresnel = float4(positionWS, 0);
+					o.viewVec_fresnel = float4(viewVec, 0);
 				#endif
 				#if defined(LF_NEEDS_NORMAL)
 					o.normalWS = half3(normalWS);
+				#endif
+				#if !defined(_MAGICDISSOLVE_SKIP)
+					o.magicP = MagicPoint(positionWS);
 				#endif
 
 				o.fogFactor = ComputeFogFactor(o.positionCS.z);
@@ -223,17 +237,15 @@ Shader "ESCENA67/LightFigureMagic"
 				UNITY_SETUP_INSTANCE_ID(i);
 				UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
 
-				float3 positionWS = i.positionWS_fresnel.xyz;
-
 				// 1) Dissolve FIRST: discarded pixels never pay for textures / emission math.
 				float3 glow = 0;
 				#if !defined(_MAGICDISSOLVE_SKIP)
-					MagicDissolveData magic = MagicDissolve(positionWS);
+					MagicDissolveData magic = MagicDissolveP(i.magicP);
 					MagicClip(magic, i.positionCS.xy);
 					glow += magic.glow;
 				#endif
 
-				float3 viewVec = _WorldSpaceCameraPos.xyz - positionWS; // un-normalized: fine for cubemap lookup
+				float3 viewVec = i.viewVec_fresnel.xyz;
 
 				// 2) Galaxy cubemap
 				#if defined(_USEREFLECTIONVECTOR_ON)
@@ -242,16 +254,18 @@ Shader "ESCENA67/LightFigureMagic"
 					float3 galaxyDir = viewVec;
 				#endif
 				float3 galaxy = SAMPLE_TEXTURECUBE(_GalaxyTexture, sampler_GalaxyTexture, galaxyDir).rgb;
-				UNITY_BRANCH
-				if (_GalaxyHueShift != 0.0 || _GalaxySaturationShift != 0.0)
-					galaxy = LF_HueSatShift(galaxy, _GalaxyHueShift, _GalaxySaturationShift);
+				#if !defined(_NO_HUE_SHIFT)
+					UNITY_BRANCH
+					if (_GalaxyHueShift != 0.0 || _GalaxySaturationShift != 0.0)
+						galaxy = LF_HueSatShift(galaxy, _GalaxyHueShift, _GalaxySaturationShift);
+				#endif
 				half3 galaxyEmission = (half3)(saturate(galaxy) * (_GalaxyTint.rgb * _GalaxyEmissionIntensity));
 
 				// 3) Fresnel
 				#if defined(_FRESNEL_PER_PIXEL)
 					float oneMinusNdotV = 1.0 - dot(normalize((float3)i.normalWS), normalize(viewVec));
 				#else
-					float oneMinusNdotV = i.positionWS_fresnel.w;
+					float oneMinusNdotV = i.viewVec_fresnel.w;
 				#endif
 				float fres = saturate(_FresnelBias + _FresnelScale * pow(max(oneMinusNdotV, 0.0001), _FresnelPower));
 				#if defined(_FRESNELINVERT_ON)
@@ -259,9 +273,11 @@ Shader "ESCENA67/LightFigureMagic"
 				#endif
 				// hue-shift(color * f) == f * hue-shift(color)  ->  the HSV work depends only on uniforms
 				float3 fresnelColor = _FresnelColor.rgb;
-				UNITY_BRANCH
-				if (_FresnelHueShift != 0.0)
-					fresnelColor = LF_HueSatShift(fresnelColor, _FresnelHueShift, 0.0);
+				#if !defined(_NO_HUE_SHIFT)
+					UNITY_BRANCH
+					if (_FresnelHueShift != 0.0)
+						fresnelColor = LF_HueSatShift(fresnelColor, _FresnelHueShift, 0.0);
+				#endif
 				half3 fresnelEmission = (half3)(saturate(fresnelColor * fres) * _FresnelEmissionIntensity);
 
 				// 4) Stars
@@ -272,9 +288,11 @@ Shader "ESCENA67/LightFigureMagic"
 				#endif
 				half starsG = SAMPLE_TEXTURE2D(_StarsTexture, sampler_StarsTexture, starsUV).g;
 				half3 starsCol = lerp((half3)_StarsColor01.rgb, (half3)_StarsColor02.rgb, saturate(starsG * noiseG * 30.0h)) * starsG;
-				UNITY_BRANCH
-				if (_StarsHueShift != 0.0)
-					starsCol = (half3)LF_HueSatShift((float3)starsCol, _StarsHueShift, 0.0);
+				#if !defined(_NO_HUE_SHIFT)
+					UNITY_BRANCH
+					if (_StarsHueShift != 0.0)
+						starsCol = (half3)LF_HueSatShift((float3)starsCol, _StarsHueShift, 0.0);
+				#endif
 				half3 starsEmission = saturate(starsCol) * (half)_StarsEmissionIntensity;
 
 				// 5) Combine (same sum as the original graph) + glow + fog
@@ -321,7 +339,7 @@ Shader "ESCENA67/LightFigureMagic"
 			{
 				float4 positionCS : SV_POSITION;
 				#if !defined(_MAGICDISSOLVE_SKIP)
-					float3 positionWS : TEXCOORD0;
+					float3 magicP : TEXCOORD0;
 				#endif
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
@@ -336,6 +354,9 @@ Shader "ESCENA67/LightFigureMagic"
 
 				float3 positionWS = TransformObjectToWorld(input.positionOS.xyz);
 				float3 normalWS = TransformObjectToWorldDir(input.normalOS);
+				#if !defined(_MAGICDISSOLVE_SKIP)
+					output.magicP = MagicPoint(positionWS); // before the shadow bias moves positionWS
+				#endif
 
 				#if _CASTING_PUNCTUAL_LIGHT_SHADOW
 					float3 lightDirectionWS = normalize(_LightPosition - positionWS);
@@ -345,9 +366,6 @@ Shader "ESCENA67/LightFigureMagic"
 
 				float4 positionCS = TransformWorldToHClip(ApplyShadowBias(positionWS, normalWS, lightDirectionWS));
 				output.positionCS = ApplyShadowClamping(positionCS);
-				#if !defined(_MAGICDISSOLVE_SKIP)
-					output.positionWS = positionWS;
-				#endif
 				return output;
 			}
 
@@ -356,8 +374,8 @@ Shader "ESCENA67/LightFigureMagic"
 				UNITY_SETUP_INSTANCE_ID(input);
 				UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
 				#if !defined(_MAGICDISSOLVE_SKIP)
-					MagicDissolveData magic = MagicDissolve(input.positionWS);
-					MagicClip(magic, input.positionCS.xy);
+					// Gradient only, no noise: shadows don't need the ragged edge (same as the kids)
+					MagicClip(MagicDissolveCheap(input.magicP), input.positionCS.xy);
 				#endif
 				return 0;
 			}
@@ -365,7 +383,7 @@ Shader "ESCENA67/LightFigureMagic"
 		}
 
 		// =====================================================================
-		// DEPTH ONLY  (depth texture / depth priming)
+		// DEPTH ONLY  (depth texture / depth priming; delete this pass if the project uses neither)
 		// =====================================================================
 		Pass
 		{
@@ -392,7 +410,7 @@ Shader "ESCENA67/LightFigureMagic"
 			{
 				float4 positionCS : SV_POSITION;
 				#if !defined(_MAGICDISSOLVE_SKIP)
-					float3 positionWS : TEXCOORD0;
+					float3 magicP : TEXCOORD0;
 				#endif
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
@@ -408,7 +426,7 @@ Shader "ESCENA67/LightFigureMagic"
 				float3 positionWS = TransformObjectToWorld(input.positionOS.xyz);
 				output.positionCS = TransformWorldToHClip(positionWS);
 				#if !defined(_MAGICDISSOLVE_SKIP)
-					output.positionWS = positionWS;
+					output.magicP = MagicPoint(positionWS);
 				#endif
 				return output;
 			}
@@ -418,8 +436,8 @@ Shader "ESCENA67/LightFigureMagic"
 				UNITY_SETUP_INSTANCE_ID(input);
 				UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
 				#if !defined(_MAGICDISSOLVE_SKIP)
-					MagicDissolveData magic = MagicDissolve(input.positionWS);
-					MagicClip(magic, input.positionCS.xy);
+					// Same cut as Forward (noise included) but no glow work
+					MagicClip(MagicDissolveOpacityP(input.magicP), input.positionCS.xy);
 				#endif
 				return 0;
 			}
@@ -428,6 +446,7 @@ Shader "ESCENA67/LightFigureMagic"
 
 		// =====================================================================
 		// MOTION VECTORS  (only used by Application SpaceWarp; delete this pass if you don't use ASW)
+		// Now clips with the same dissolve as Forward, so dissolved pixels no longer write motion (no ghosting).
 		// =====================================================================
 		Pass
 		{
@@ -441,6 +460,7 @@ Shader "ESCENA67/LightFigureMagic"
 			#pragma fragment frag
 
 			#pragma multi_compile_instancing
+			#pragma multi_compile_local _ _MAGICDISSOLVE_SKIP
 
 			#define SHADERPASS SHADERPASS_MOTION_VECTORS
 			#include "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/ShaderPass.hlsl"
@@ -458,6 +478,9 @@ Shader "ESCENA67/LightFigureMagic"
 				float4 positionCS               : SV_POSITION;
 				float4 positionCSNoJitter       : TEXCOORD0;
 				float4 previousPositionCSNoJitter : TEXCOORD1;
+				#if !defined(_MAGICDISSOLVE_SKIP)
+					float3 magicP               : TEXCOORD2;
+				#endif
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -481,6 +504,9 @@ Shader "ESCENA67/LightFigureMagic"
 
 				float4 prevPos = (unity_MotionVectorsParams.x == 1) ? float4(input.positionOld, 1) : input.positionOS;
 				output.previousPositionCSNoJitter = mul(_PrevViewProjMatrix, mul(UNITY_PREV_MATRIX_M, prevPos));
+				#if !defined(_MAGICDISSOLVE_SKIP)
+					output.magicP = MagicPoint(vertexInput.positionWS);
+				#endif
 				return output;
 			}
 
@@ -488,6 +514,9 @@ Shader "ESCENA67/LightFigureMagic"
 			{
 				UNITY_SETUP_INSTANCE_ID(input);
 				UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
+				#if !defined(_MAGICDISSOLVE_SKIP)
+					MagicClip(MagicDissolveOpacityP(input.magicP), input.positionCS.xy);
+				#endif
 				#if defined(APLICATION_SPACE_WARP_MOTION)
 					return float4(CalcAswNdcMotionVectorFromCsPositions(input.positionCSNoJitter, input.previousPositionCSNoJitter), 1);
 				#else
@@ -510,4 +539,9 @@ Shader "ESCENA67/LightFigureMagic"
    - New keyword (runtime): _MAGICDISSOLVE_SKIP  -> compiles the dissolve out of Forward/Depth/Shadow.
    - New toggles: _FRESNEL_PER_PIXEL, _STARS_DISTORTION_ON.
    - Removed properties: Metallic, Smoothness, Galaxy Base Color Intensity (no lighting any more).
+   - Dissolve mapping (MagicPoint) now runs per vertex in every pass; passes call MagicDissolveP / Cheap / OpacityP.
+   - Shadow pass uses the gradient-only dissolve; depth / motion-vector passes skip the glow work.
+   - Motion-vector pass now clips dissolved pixels.
+   - Foveated-rendering keyword include removed (halves Forward variants).
+   - New toggle: _NO_HUE_SHIFT strips all hue/saturation shift code.
 --------------------------------------------------------------------------- */

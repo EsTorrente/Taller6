@@ -9,6 +9,14 @@ public class FairyFloat : MonoBehaviour
     public float swayAmount = 0.08f;
     public float swaySpeed = 0.7f;
 
+    [Header("Facing")]
+    [Tooltip("Rotate to face the active camera.")]
+    public bool faceCamera = true;
+    [Tooltip("Only rotate around the Y axis (stays upright).")]
+    public bool yAxisOnly = false;
+    [Tooltip("The rotation at which the object faces the camera (its base rotation).")]
+    public Vector3 baseRotation = new Vector3(90f, 180f, 0f);
+
     [Header("Return")]
     public float returnForce = 8f;
     public float damping = 3f;
@@ -29,6 +37,7 @@ public class FairyFloat : MonoBehaviour
         AnimationCurve.EaseInOut(0, 0, 1, 1);
 
     Rigidbody rb;
+    Camera cam;
 
     Vector3 startPosition;
     float randomOffset;
@@ -44,6 +53,7 @@ public class FairyFloat : MonoBehaviour
         randomOffset = Random.Range(0f, 100f);
 
         rb.useGravity = false;
+        rb.freezeRotation = true; // hits shouldn't spin it
     }
 
     void FixedUpdate()
@@ -70,6 +80,25 @@ public class FairyFloat : MonoBehaviour
         Vector3 force = (target - rb.position) * returnForce * springWeight;
 
         rb.AddForce(force - rb.linearVelocity * damping * springWeight, ForceMode.Acceleration);
+    }
+
+    void LateUpdate()
+    {
+        if (!faceCamera) return;
+
+        // Find the active camera (re-check if it was disabled or destroyed)
+        if (cam == null || !cam.isActiveAndEnabled)
+            cam = Camera.main;
+        if (cam == null) return;
+
+        // Direction pointing AWAY from the camera. The base rotation (90, 180, 0)
+        // is the pose where the object's visible face points back along -Z,
+        // so aligning +Z with this direction turns that face toward the camera.
+        Vector3 dir = transform.position - cam.transform.position;
+        if (yAxisOnly) dir.y = 0f;
+        if (dir.sqrMagnitude < 0.0001f) return;
+
+        transform.rotation = Quaternion.LookRotation(dir, Vector3.up) * Quaternion.Euler(baseRotation);
     }
 
     void OnCollisionEnter(Collision collision)

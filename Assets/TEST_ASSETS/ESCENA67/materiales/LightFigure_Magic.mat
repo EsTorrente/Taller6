@@ -99,7 +99,7 @@ Material:
     - _FresnelPower: 5
     - _FresnelScale: 1
     - _GalaxyBaseColorIntensity: 0
-    - _GalaxyEmissionIntensity: 4.98
+    - _GalaxyEmissionIntensity: 12.86
     - _GalaxyHueShift: 0
     - _GalaxySaturationShift: -0.2
     - _MagicGlowNoiseDetail: 2
@@ -116,6 +116,7 @@ Material:
     - _MagicSparkleW: 0
     - _MagicSparkleWPerFrame: 0
     - _Metallic: 0
+    - _NoHueShift: 0
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 0
@@ -139,8 +140,8 @@ Material:
     - _GalaxyTint: {r: 1, g: 0.41291898, b: 0, a: 0}
     - _MagicCut: {r: 0.5, g: 0.536, b: 0, a: 0}
     - _MagicEdge: {r: 0.4, g: 0.515, b: 0.6, a: 0}
-    - _MagicGlowColorA: {r: 1, g: 0.9226011, b: 0.7688679, a: 1}
-    - _MagicGlowColorB: {r: 1, g: 0.8063, b: 0.12309996, a: 1}
+    - _MagicGlowColorA: {r: 0, g: 1, b: 0.7880776, a: 1}
+    - _MagicGlowColorB: {r: 1, g: 0.5094871, b: 0, a: 1}
     - _MagicGlowColorRamp: {r: 0.3, g: 0.7, b: 0, a: 0}
     - _MagicMapLocation: {r: 0.3, g: 0, b: 0, a: 0}
     - _MagicMapRotation: {r: 0, g: 1.5708, b: 0, a: 0}

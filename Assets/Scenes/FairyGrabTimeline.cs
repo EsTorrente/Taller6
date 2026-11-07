@@ -6,7 +6,7 @@ using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 /// <summary>
 /// A small object that floats in space. When it is grabbed (hand tracking via XR Interaction Toolkit),
-/// it plays a Timeline (PlayableDirector).
+/// it plays a Timeline (PlayableDirector). It always rotates to face the active camera.
 ///
 /// Requires XR Interaction Toolkit 3.x (Unity 6). Works with the XR Hands "Near-Far Interactor" / Grab Interactor.
 /// </summary>
@@ -36,6 +36,14 @@ public class FairyGrabTimeline : MonoBehaviour
     public float swayAmount = 0.08f;
     public float swaySpeed = 0.7f;
 
+    [Header("Facing")]
+    [Tooltip("Rotate to face the active camera.")]
+    public bool faceCamera = true;
+    [Tooltip("Only rotate around the Y axis (stays upright).")]
+    public bool yAxisOnly = false;
+    [Tooltip("The rotation at which the object faces the camera (its base rotation).")]
+    public Vector3 baseRotation = new Vector3(90f, 180f, 0f);
+
     [Header("Spring")]
     public float returnForce = 8f;
     public float damping = 3f;
@@ -51,6 +59,7 @@ public class FairyGrabTimeline : MonoBehaviour
 
     Rigidbody rb;
     XRGrabInteractable grab;
+    Camera cam;
 
     Vector3 startPosition;
     float randomOffset;
@@ -65,10 +74,12 @@ public class FairyGrabTimeline : MonoBehaviour
         grab = GetComponent<XRGrabInteractable>();
 
         rb.useGravity = false;
+        rb.freezeRotation = true;     // physics shouldn't spin it
 
         // Make it follow the hand directly and never get thrown when released
         grab.movementType = XRBaseInteractable.MovementType.Instantaneous;
         grab.throwOnDetach = false;
+        grab.trackRotation = false;   // the hand shouldn't rotate it either
     }
 
     void Start()
@@ -119,6 +130,25 @@ public class FairyGrabTimeline : MonoBehaviour
 
         Vector3 force = (target - rb.position) * returnForce * springWeight;
         rb.AddForce(force - rb.linearVelocity * damping * springWeight, ForceMode.Acceleration);
+    }
+
+    void LateUpdate()
+    {
+        if (!faceCamera) return;
+
+        // Find the active camera (re-check if it was disabled or destroyed)
+        if (cam == null || !cam.isActiveAndEnabled)
+            cam = Camera.main;
+        if (cam == null) return;
+
+        // Direction pointing AWAY from the camera. The base rotation (90, 180, 0)
+        // is the pose where the object's visible face points back along -Z,
+        // so aligning +Z with this direction turns that face toward the camera.
+        Vector3 dir = transform.position - cam.transform.position;
+        if (yAxisOnly) dir.y = 0f;
+        if (dir.sqrMagnitude < 0.0001f) return;
+
+        transform.rotation = Quaternion.LookRotation(dir, Vector3.up) * Quaternion.Euler(baseRotation);
     }
 
     void OnGrab(SelectEnterEventArgs args)
