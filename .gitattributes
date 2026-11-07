@@ -1,2 +1,4 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+Assets/TEST_ASSETS/ESCENA5/ESCENA5.fbx filter=lfs diff=lfs merge=lfs -text
+Assets/TEST_ASSETS/ESCENA67/video/Fondo67.mp4 filter=lfs diff=lfs merge=lfs -text
