@@ -74,11 +74,28 @@ public class FairyFloat : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
+        Transform hitTransform = collision.collider.transform;
+        string path = hitTransform.name;
+        while (hitTransform.parent != null)
+        {
+            hitTransform = hitTransform.parent;
+            path = hitTransform.name + "/" + path;
+        }
+
+        Debug.Log(
+            $"Hit by {collision.collider.GetType().Name} at {path} | " +
+            $"isTrigger={collision.collider.isTrigger} | " +
+            $"rigidbody={(collision.rigidbody != null ? collision.rigidbody.name : "none")}",
+            collision.collider);
+
         ControllerVelocity velocity =
-        collision.collider.GetComponentInParent<ControllerVelocity>();
+            collision.collider.GetComponentInParent<ControllerVelocity>();
 
         if (velocity == null)
+        {
+            Debug.Log("No ControllerVelocity found on or above that collider");
             return;
+        }
 
         float controllerSpeed = velocity.Velocity.magnitude;
         Debug.Log(controllerSpeed);

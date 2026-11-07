@@ -2617,6 +2617,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 781544023858974861}
     - target: {fileID: 6288467125497789300, guid: b200f6587d118224eba8467281481800, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6288467125497789300, guid: b200f6587d118224eba8467281481800, type: 3}
       propertyPath: m_LineBendRatio
       value: 0.15
       objectReference: {fileID: 0}
@@ -2733,6 +2737,10 @@ PrefabInstance:
       propertyPath: m_UIPressInput.m_ObjectReferenceObject
       value: 
       objectReference: {fileID: 488363206831216342}
+    - target: {fileID: 3755238779732181253, guid: 3df3e1220f2164f448701a6de8084f92, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3755238779732181253, guid: 3df3e1220f2164f448701a6de8084f92, type: 3}
       propertyPath: m_LineBendRatio
       value: 0.15

@@ -7,8 +7,6 @@ public class CharacterColorUI : MonoBehaviour
     // COLOR VALUES
     // =========================================================
 
-    [SerializeField] private string sceneName = "SceneName";
-
     // Hair
     private Color HairBlond =>
         HexToColor("FFFFE9");
@@ -143,7 +141,7 @@ public class CharacterColorUI : MonoBehaviour
 
     public void Continue()
     {
-        SceneManager.LoadScene($"sceneName");
+        SceneManager.LoadScene("Cinematic");
     }
 
 

@@ -31,7 +31,12 @@ public class VRRecenter : MonoBehaviour
     [Tooltip("Rotate the player to face the spawn point's forward direction.")]
     [SerializeField] private bool matchFacing = true;
 
-    private IEnumerator Start()
+    private void OnEnable()
+    {
+        StartCoroutine(RepositionAfterDelay());
+    }
+
+    private IEnumerator RepositionAfterDelay()
     {
         yield return new WaitForSeconds(delay);
         yield return Reposition();

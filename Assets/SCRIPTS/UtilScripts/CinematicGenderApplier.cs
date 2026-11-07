@@ -14,25 +14,58 @@ public class CinematicGenderApplier : MonoBehaviour
     [Tooltip("Limit the search to these prefab roots. Leave empty to search the whole scene.")]
     public Transform[] prefabRoots;
 
+    [Tooltip("Re-apply every frame (LateUpdate). Enable only if a Timeline/Animator keeps turning the meshes back on.")]
+    public bool reapplyEveryFrame = false;
+
+    HashSet<string> maleSet, femaleSet;
+    readonly List<GameObject> maleObjects = new List<GameObject>();
+    readonly List<GameObject> femaleObjects = new List<GameObject>();
+    bool male;
+
+    void Awake()
+    {
+        maleSet = new HashSet<string>(maleMeshNames);
+        femaleSet = new HashSet<string>(femaleMeshNames);
+    }
+
     void Start()
     {
         Apply(GenderSelection.Current);
     }
 
+    void LateUpdate()
+    {
+        // Runs after Timeline/Animator evaluation, so it wins any fight over the state.
+        if (reapplyEveryFrame) SetStates();
+    }
+
     public void Apply(GenderSelection.Gender gender)
     {
-        bool male = gender == GenderSelection.Gender.Male;
+        male = gender == GenderSelection.Gender.Male;
 
-        var maleSet = new HashSet<string>(maleMeshNames);
-        var femaleSet = new HashSet<string>(femaleMeshNames);
-
+        // Cache the matching GameObjects once (includes inactive prefabs).
+        maleObjects.Clear();
+        femaleObjects.Clear();
         foreach (Renderer r in GetAllRenderers())
         {
-            if (maleSet.Contains(r.name))
-                r.enabled = male;
-            else if (femaleSet.Contains(r.name))
-                r.enabled = !male;
+            if (maleSet.Contains(r.name)) maleObjects.Add(r.gameObject);
+            else if (femaleSet.Contains(r.name)) femaleObjects.Add(r.gameObject);
         }
+
+        SetStates();
+    }
+
+    void SetStates()
+    {
+        // SetActive on the CHILD itself: its own active flag stays false even
+        // when a parent is activated later, so the mesh remains hidden.
+        for (int i = 0; i < maleObjects.Count; i++)
+            if (maleObjects[i] != null && maleObjects[i].activeSelf != male)
+                maleObjects[i].SetActive(male);
+
+        for (int i = 0; i < femaleObjects.Count; i++)
+            if (femaleObjects[i] != null && femaleObjects[i].activeSelf != !male)
+                femaleObjects[i].SetActive(!male);
     }
 
     IEnumerable<Renderer> GetAllRenderers()
@@ -46,7 +79,6 @@ public class CinematicGenderApplier : MonoBehaviour
         }
         else
         {
-            // Unity 6 API (FindObjectsOfType is deprecated)
             foreach (Renderer r in FindObjectsByType<Renderer>(
                          FindObjectsInactive.Include, FindObjectsSortMode.None))
                 yield return r;
