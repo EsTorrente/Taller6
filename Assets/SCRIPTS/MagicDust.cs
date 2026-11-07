@@ -16,13 +16,16 @@ public class MagicDust : MonoBehaviour
     [Tooltip("How fast they fall (m/s)")]
     public float fall = 0.25f;
     public Color color = new Color(1f, 0.72f, 0.35f);
+    [Tooltip("Figures to shed dust from. Empty = every light figure under this object")]
+    public SkinnedMeshRenderer[] figures;
 
     readonly List<(Renderer figure, ParticleSystem dust)> systems = new List<(Renderer, ParticleSystem)>();
 
     void Start()
     {
-        foreach (var figure in GetComponentsInChildren<SkinnedMeshRenderer>(true))
-            systems.Add((figure, Make(figure)));
+        var list = figures != null && figures.Length > 0 ? figures : GetComponentsInChildren<SkinnedMeshRenderer>(true);
+        foreach (var figure in list)
+            if (figure) systems.Add((figure, Make(figure)));
     }
 
     void Update()
