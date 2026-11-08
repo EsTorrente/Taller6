@@ -199,13 +199,13 @@ MonoBehaviour:
   active: 1
   shadows:
     m_OverrideState: 1
-    m_Value: {x: 0.8151405, y: 0.63813484, z: 1, w: 0}
+    m_Value: {x: 0.80127525, y: 0.87090474, z: 1, w: 0}
   midtones:
     m_OverrideState: 1
-    m_Value: {x: 0.8660786, y: 1, z: 0.8489865, w: 0}
+    m_Value: {x: 1, y: 1, z: 1, w: 0}
   highlights:
     m_OverrideState: 1
-    m_Value: {x: 1, y: 1, z: 1, w: 0}
+    m_Value: {x: 1, y: 0.95236903, z: 0.8297863, w: 0}
   shadowsStart:
     m_OverrideState: 1
     m_Value: 0
@@ -295,7 +295,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d7fd9488000d3734a9e00ee676215985, type: 3}
-  m_Name: Global Volume Profile 1
+  m_Name: Global Volume Profile E2
   m_EditorClassIdentifier: 
   components:
   - {fileID: 3639864236224618144}
