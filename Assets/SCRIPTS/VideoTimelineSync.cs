@@ -24,6 +24,10 @@ public class VideoTimelineSync : MonoBehaviour
     public float maxDrift = 0.15f;
     [Tooltip("Start the Timeline anyway after this long if a video isn't ready (seconds)")]
     public float prepareTimeout = 5f;
+    [Tooltip("Optional. When set, this Timeline starts in step with the Master one instead of from 0 (e.g. a scene section inside the Cinematic)")]
+    public PlayableDirector master;
+    [Tooltip("Master time at which this Timeline's time 0 falls (seconds)")]
+    public double masterOffset;
 
     bool started;
     float waited;
@@ -52,6 +56,8 @@ public class VideoTimelineSync : MonoBehaviour
             foreach (var v in videos) ready &= v.player.isPrepared;
             if (!ready && waited < prepareTimeout) return;
             started = true;
+            // also covers the time spent waiting for the videos, so the section doesn't fall behind the master's music
+            if (master) director.time = System.Math.Max(0, master.time - masterOffset);
             director.Play();
         }
 
