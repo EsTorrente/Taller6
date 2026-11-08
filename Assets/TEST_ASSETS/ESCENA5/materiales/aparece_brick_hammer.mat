@@ -39,10 +39,10 @@ Material:
     - _EyeStrength: 0.923
     - _FootMaskOff: 0
     - _FootRimMask: 1
-    - _FootShadowEnd: 0.5
+    - _FootShadowEnd: 0.63
     - _FootShadowSpace: 0
     - _FootShadowStart: 0
-    - _FootShadowStrength: 0
+    - _FootShadowStrength: 1
     - _HairStrength: 0.922
     - _LightIntensity: 0.8
     - _MagicGlowNoiseDetail: 2
@@ -78,7 +78,7 @@ Material:
     - _Unlit: 0
     m_Colors:
     - _EyeColor: {r: 1, g: 1, b: 1, a: 1}
-    - _FootShadowColor: {r: 0, g: 0, b: 0, a: 1}
+    - _FootShadowColor: {r: 0.11320752, g: 0.06461372, b: 0.06461372, a: 1}
     - _HairColor: {r: 1, g: 1, b: 1, a: 1}
     - _MagicCut: {r: 0.5, g: 0.536, b: 0, a: 0}
     - _MagicEdge: {r: 0.4, g: 0.515, b: 0.6, a: 0}
@@ -90,7 +90,7 @@ Material:
     - _MagicMapScale: {r: 1, g: 1, b: 1, a: 0}
     - _MagicSparkleRamp: {r: 0.45, g: 0.75, b: 0.35, a: 3}
     - _RimColor: {r: 1, g: 0.651, b: 0.627, a: 1}
-    - _ShadowColor: {r: 0.34099993, g: 0.38399997, b: 0.792, a: 1}
+    - _ShadowColor: {r: 0.14965291, g: 0.1792453, b: 0.17865357, a: 1}
     - _SkinColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

@@ -90,7 +90,7 @@ Material:
     - _MagicMapScale: {r: 1, g: 1, b: 1, a: 0}
     - _MagicSparkleRamp: {r: 0.45, g: 0.75, b: 0.35, a: 3}
     - _RimColor: {r: 1, g: 0.651, b: 0.627, a: 1}
-    - _ShadowColor: {r: 0.34099993, g: 0.38399997, b: 0.792, a: 1}
+    - _ShadowColor: {r: 0.024964407, g: 0.037916943, b: 0.16037738, a: 1}
     - _SkinColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
