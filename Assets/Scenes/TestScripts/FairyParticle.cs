@@ -1,5 +1,7 @@
 using UnityEngine;
 
+// Runs after most scripts so the tracked object has already moved this frame.
+[DefaultExecutionOrder(100)]
 [RequireComponent(typeof(Rigidbody))]
 public class FairyFloat : MonoBehaviour
 {
@@ -14,7 +16,7 @@ public class FairyFloat : MonoBehaviour
     public MovementMode movementMode = MovementMode.FloatInPlace;
 
     [Header("Orbit (only used in Orbit Object mode)")]
-    [Tooltip("The object to orbit around.")]
+    [Tooltip("The object to orbit. The fairy is carried along with it like a child.")]
     public Transform orbitTarget;
     [Tooltip("Distance from the target.")]
     public float orbitRadius = 0.5f;
@@ -23,12 +25,25 @@ public class FairyFloat : MonoBehaviour
     [Tooltip("Axis to orbit around (in the target's local space if 'Use Target Local Axis' is on).")]
     public Vector3 orbitAxis = Vector3.up;
     public bool useTargetLocalAxis = false;
-    [Tooltip("Extra height offset above the target's position.")]
+    [Tooltip("Extra height offset along the orbit axis.")]
     public float orbitHeightOffset = 0f;
 
-    [Header("Follow Smoothing (Orbit mode)")]
-    [Tooltip("How smoothly the orbit center follows the target. Higher = smoother but more lag. 0 = no smoothing.")]
-    public float followSmoothTime = 0.2f;
+    [Header("Target Safety (Orbit mode)")]
+    [Tooltip("Stops the fairy's collider from bumping the orbit target. Overlapping colliders can push the target around and cause glitching.")]
+    public bool ignoreTargetCollisions = true;
+    [Tooltip("If the target has a Rigidbody with Interpolation off, switch it on. A physics-moved target otherwise visibly steps at the physics rate.")]
+    public bool fixTargetInterpolation = true;
+
+    [Header("Debug")]
+    public bool debugLogs = false;
+
+    [Header("Grab / Release")]
+    [Tooltip("Seconds the fairy takes to ease back to its floating spot after you let go. Higher = gentler return.")]
+    public float releaseRampTime = 0.8f;
+    [Tooltip("Short pause (seconds) after letting go before the return starts, so it drifts a moment from where you released it.")]
+    public float releaseReturnDelay = 0.1f;
+    [Tooltip("How much of your hand's motion carries into the fairy when you let go. 0 = none.")]
+    public float throwInfluence = 1f;
 
     [Header("Floating")]
     public float floatHeight = 0.12f;
@@ -71,17 +86,35 @@ public class FairyFloat : MonoBehaviour
 
     float orbitAngle; // current angle in degrees
 
-    // Smoothed orbit center (so jerky target movement doesn't jerk the fairy)
-    Vector3 smoothedCenter;
-    Vector3 centerVelocity;
+    // The fairy's float/bounce is simulated in the "anchor's frame":
+    //   world position = anchor position + localOffset
+    // The anchor is the orbit target (or the start position in Float In Place mode).
+    // Because the spring only ever sees localOffset, moving the anchor carries the
+    // fairy along rigidly and never disturbs its float or bounce-back.
+    Vector3 localOffset;
+    Vector3 prevLocalOffset; // for render interpolation
+    Vector3 localVelocity;
 
-    // For feed-forward damping (fairy damps against the target's velocity, not zero)
-    Vector3 lastTargetPos;
-    Vector3 targetVelocity;
+    Vector3 lastLocalTarget;
     bool hasLastTarget;
+
+    Transform currentAnchor;
+    bool wasOrbiting;
+    Collider[] ignoredColliders;
+
+    // Grab handling
+    bool manualHeld;
+    bool isHeld;
+    Behaviour selectedSource;
+    System.Func<bool> selectedGetter;
+    Vector3 heldLastOffset;
+    Vector3 heldVelocity;
+    float rampRate = 3f;
 
     float springWeight = 1f;
     float springTimer;
+
+    bool IsOrbiting => movementMode == MovementMode.OrbitObject && orbitTarget != null;
 
     void Start()
     {
@@ -93,20 +126,82 @@ public class FairyFloat : MonoBehaviour
         rb.useGravity = false;
         rb.freezeRotation = true; // hits shouldn't spin it
 
-        // Smooths the visual movement between physics steps (fixes stepping/jitter)
-        rb.interpolation = RigidbodyInterpolation.Interpolate;
+        // We position the transform ourselves every frame, so Unity's rigidbody
+        // interpolation must be off or the two will fight (that causes jitter).
+        rb.interpolation = RigidbodyInterpolation.None;
 
-        if (orbitTarget != null)
-            smoothedCenter = orbitTarget.position;
+        FindGrabSource();
+        SyncAnchor();
+    }
 
-        InitOrbitAngle();
+    Vector3 GetAnchorPosition()
+    {
+        return IsOrbiting ? orbitTarget.position : startPosition;
+    }
+
+    // Re-anchors without any snapping when the mode or target changes.
+    void SyncAnchor()
+    {
+        bool orbiting = IsOrbiting;
+        Transform anchor = orbiting ? orbitTarget : null;
+
+        if (anchor == currentAnchor && orbiting == wasOrbiting)
+            return;
+
+        ReleaseIgnoredColliders();
+
+        currentAnchor = anchor;
+        wasOrbiting = orbiting;
+
+        if (orbiting)
+        {
+            InitOrbitAngle();
+            PrepareTarget();
+        }
+
+        localOffset = transform.position - GetAnchorPosition();
+        prevLocalOffset = localOffset;
+        hasLastTarget = false;
+    }
+
+    void PrepareTarget()
+    {
+        if (ignoreTargetCollisions)
+        {
+            ignoredColliders = orbitTarget.GetComponentsInChildren<Collider>();
+            SetIgnore(ignoredColliders, true);
+        }
+
+        if (fixTargetInterpolation)
+        {
+            Rigidbody targetBody = orbitTarget.GetComponentInParent<Rigidbody>();
+            if (targetBody != null && targetBody.interpolation == RigidbodyInterpolation.None)
+                targetBody.interpolation = RigidbodyInterpolation.Interpolate;
+        }
+    }
+
+    void ReleaseIgnoredColliders()
+    {
+        if (ignoredColliders == null) return;
+        SetIgnore(ignoredColliders, false);
+        ignoredColliders = null;
+    }
+
+    void SetIgnore(Collider[] others, bool ignore)
+    {
+        Collider[] mine = GetComponentsInChildren<Collider>();
+        foreach (Collider other in others)
+        {
+            if (other == null) continue;
+            foreach (Collider m in mine)
+                if (m != other)
+                    Physics.IgnoreCollision(m, other, ignore);
+        }
     }
 
     // Start the orbit from wherever the fairy currently is, so it doesn't snap.
     void InitOrbitAngle()
     {
-        if (orbitTarget == null) return;
-
         Vector3 axis = GetOrbitAxis();
         Vector3 offset = Vector3.ProjectOnPlane(transform.position - orbitTarget.position, axis);
 
@@ -116,8 +211,7 @@ public class FairyFloat : MonoBehaviour
             return;
         }
 
-        Vector3 reference = GetOrbitReference(axis);
-        orbitAngle = Vector3.SignedAngle(reference, offset, axis);
+        orbitAngle = Vector3.SignedAngle(GetOrbitReference(axis), offset, axis);
     }
 
     Vector3 GetOrbitAxis()
@@ -137,76 +231,210 @@ public class FairyFloat : MonoBehaviour
         return reference.normalized;
     }
 
-    Vector3 GetBasePosition()
+    // Where on the orbit circle the fairy wants to be, relative to the anchor.
+    Vector3 GetOrbitLocalTarget()
     {
-        if (movementMode == MovementMode.OrbitObject && orbitTarget != null)
-        {
-            Vector3 axis = GetOrbitAxis();
-            Vector3 reference = GetOrbitReference(axis);
-            Vector3 radial = Quaternion.AngleAxis(orbitAngle, axis) * reference;
+        Vector3 axis = GetOrbitAxis();
+        Vector3 radial = Quaternion.AngleAxis(orbitAngle, axis) * GetOrbitReference(axis);
+        return radial * orbitRadius + axis * orbitHeightOffset;
+    }
 
-            return smoothedCenter
-                   + radial * orbitRadius
-                   + axis * orbitHeightOffset;
+    // ---------- Grab / release ----------
+
+    // Optional manual hooks, for grab systems that aren't detected automatically.
+    // Hook these to your grab object's "grabbed" / "released" events.
+    public void Grabbed() { manualHeld = true; }
+    public void Released() { manualHeld = false; }
+
+    // Auto-detects XR Interaction Toolkit grabs (any component with a bool "isSelected").
+    void FindGrabSource()
+    {
+        foreach (Behaviour b in GetComponentsInParent<Behaviour>())
+        {
+            if (b == this) continue;
+
+            System.Reflection.PropertyInfo pi = b.GetType().GetProperty(
+                "isSelected",
+                System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+
+            if (pi != null && pi.PropertyType == typeof(bool) && pi.CanRead)
+            {
+                selectedSource = b;
+                selectedGetter = (System.Func<bool>)System.Delegate.CreateDelegate(
+                    typeof(System.Func<bool>), b, pi.GetGetMethod());
+                return;
+            }
+        }
+    }
+
+    bool DetectHeld()
+    {
+        if (manualHeld) return true;
+        if (rb != null && rb.isKinematic) return true; // many grab systems make it kinematic while held
+        if (selectedGetter != null && selectedSource != null) return selectedGetter();
+        return false;
+    }
+
+    void UpdateHeldState()
+    {
+        bool held = DetectHeld();
+        if (held == isHeld) return;
+
+        isHeld = held;
+
+        if (isHeld)
+        {
+            localVelocity = Vector3.zero;
+            heldVelocity = Vector3.zero;
+            heldLastOffset = transform.position - GetAnchorPosition();
+            hasLastTarget = false;
+        }
+        else
+        {
+            // Let go: carry on from exactly where it was released
+            ResumeFromCurrentPosition(heldVelocity * throwInfluence);
+        }
+    }
+
+    // Start the float/bounce simulation from wherever the fairy is right now,
+    // and ease the spring back in so it glides home instead of snapping.
+    void ResumeFromCurrentPosition(Vector3 velocity)
+    {
+        localOffset = transform.position - GetAnchorPosition();
+        prevLocalOffset = localOffset;
+        localVelocity = Vector3.ClampMagnitude(velocity, maxHitVelocity);
+        hasLastTarget = false;
+
+        springWeight = 0f;
+        springTimer = releaseReturnDelay;
+        rampRate = 1f / Mathf.Max(0.05f, releaseRampTime);
+    }
+
+    // While held, just follow along and measure how the hand is moving.
+    void TrackHeld()
+    {
+        Vector3 offset = transform.position - GetAnchorPosition();
+        float dt = Time.deltaTime;
+
+        if (dt > 0f)
+        {
+            Vector3 v = (offset - heldLastOffset) / dt;
+            float k = 1f - Mathf.Exp(-20f * dt);
+            heldVelocity = Vector3.Lerp(heldVelocity, v, k);
         }
 
-        return startPosition;
+        heldLastOffset = offset;
+        localOffset = offset;
+        prevLocalOffset = offset;
     }
 
     void FixedUpdate()
     {
+        SyncAnchor();
+        UpdateHeldState();
+        if (isHeld) return; // the grab system is in control
+
+        float dt = Time.fixedDeltaTime;
         float t = Time.time + randomOffset;
+        bool orbiting = IsOrbiting;
 
-        bool orbiting = movementMode == MovementMode.OrbitObject && orbitTarget != null;
+        prevLocalOffset = localOffset;
 
-        if (orbiting)
-        {
-            orbitAngle = Mathf.Repeat(orbitAngle + orbitSpeed * Time.fixedDeltaTime, 360f);
-
-            if (followSmoothTime > 0.0001f)
-                smoothedCenter = Vector3.SmoothDamp(
-                    smoothedCenter, orbitTarget.position, ref centerVelocity,
-                    followSmoothTime, Mathf.Infinity, Time.fixedDeltaTime);
-            else
-                smoothedCenter = orbitTarget.position;
-        }
-
-        Vector3 target =
-            GetBasePosition() +
+        // Where the fairy wants to be, relative to its anchor
+        Vector3 localTarget =
             Vector3.up * Mathf.Sin(t * floatSpeed) * floatHeight +
             Vector3.right * Mathf.Sin(t * swaySpeed) * swayAmount +
             Vector3.forward * Mathf.Cos(t * swaySpeed * 0.8f) * swayAmount;
 
-        // Velocity of the moving target, so the fairy matches it instead of lagging behind
-        if (hasLastTarget && Time.fixedDeltaTime > 0f)
-            targetVelocity = (target - lastTargetPos) / Time.fixedDeltaTime;
-        else
-            targetVelocity = Vector3.zero;
-        lastTargetPos = target;
-        hasLastTarget = true;
+        if (orbiting)
+        {
+            orbitAngle = Mathf.Repeat(orbitAngle + orbitSpeed * dt, 360f);
+            localTarget += GetOrbitLocalTarget();
+        }
 
         // Delay the spring after being hit
         if (springTimer > 0)
         {
-            springTimer -= Time.fixedDeltaTime;
+            springTimer -= dt;
             springWeight = 0;
         }
         else
         {
-            springWeight = Mathf.MoveTowards(springWeight, 1f, Time.fixedDeltaTime * 3f);
+            springWeight = Mathf.MoveTowards(springWeight, 1f, dt * rampRate);
         }
 
-        Vector3 force = (target - rb.position) * returnForce * springWeight;
+        // In orbit mode, damp relative to the moving orbit point so it doesn't lag behind it
+        Vector3 targetVelocity = Vector3.zero;
+        if (orbiting && hasLastTarget)
+            targetVelocity = (localTarget - lastLocalTarget) / dt;
+        lastLocalTarget = localTarget;
+        hasLastTarget = true;
 
-        // In orbit mode, damp relative to the target's motion so it follows smoothly
-        Vector3 referenceVelocity = orbiting ? targetVelocity : Vector3.zero;
-        Vector3 dampingForce = (rb.linearVelocity - referenceVelocity) * damping * springWeight;
+        // Spring + damping, all in the local frame
+        Vector3 acceleration =
+            (localTarget - localOffset) * returnForce * springWeight
+            - (localVelocity - targetVelocity) * damping * springWeight;
 
-        rb.AddForce(force - dampingForce, ForceMode.Acceleration);
+        localVelocity += acceleration * dt;
+        localOffset += localVelocity * dt;
+
+        // Keep the physics body in sync so collisions still register.
+        // Its own velocity is ignored; the local simulation above is the real motion.
+        rb.position = GetAnchorPosition() + localOffset;
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+    }
+
+    void OnEnable()
+    {
+        Application.onBeforeRender += ApplyPose;
+
+        // Re-enabled after being switched off (e.g. during a grab): glide back instead of snapping
+        if (rb != null)
+        {
+            SyncAnchor();
+            ResumeFromCurrentPosition(Vector3.zero);
+        }
+    }
+
+    void OnDisable()
+    {
+        Application.onBeforeRender -= ApplyPose;
+        ReleaseIgnoredColliders();
+        currentAnchor = null;
+        wasOrbiting = false;
+        isHeld = false;
     }
 
     void LateUpdate()
     {
+        SyncAnchor();
+        UpdateHeldState();
+
+        if (isHeld)
+            TrackHeld();
+
+        ApplyPose();
+    }
+
+    // Runs in LateUpdate AND again right before rendering, so tracked objects
+    // (VR controllers etc.) that update their pose late are still followed exactly.
+    void ApplyPose()
+    {
+        if (rb == null) return;
+
+        // Blend the local offset between physics steps (smooth at any frame rate),
+        // then attach it to the anchor's CURRENT position, exactly like a child object.
+        if (!isHeld)
+        {
+            float alpha = Time.fixedDeltaTime > 0f
+                ? Mathf.Clamp01((Time.time - Time.fixedTime) / Time.fixedDeltaTime)
+                : 1f;
+
+            Vector3 renderOffset = Vector3.Lerp(prevLocalOffset, localOffset, alpha);
+            transform.position = GetAnchorPosition() + renderOffset;
+        }
+
         if (!faceCamera) return;
 
         // Find the active camera (re-check if it was disabled or destroyed)
@@ -226,31 +454,36 @@ public class FairyFloat : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        Transform hitTransform = collision.collider.transform;
-        string path = hitTransform.name;
-        while (hitTransform.parent != null)
-        {
-            hitTransform = hitTransform.parent;
-            path = hitTransform.name + "/" + path;
-        }
+        if (isHeld) return;
 
-        Debug.Log(
-            $"Hit by {collision.collider.GetType().Name} at {path} | " +
-            $"isTrigger={collision.collider.isTrigger} | " +
-            $"rigidbody={(collision.rigidbody != null ? collision.rigidbody.name : "none")}",
-            collision.collider);
+        if (debugLogs)
+        {
+            Transform hitTransform = collision.collider.transform;
+            string path = hitTransform.name;
+            while (hitTransform.parent != null)
+            {
+                hitTransform = hitTransform.parent;
+                path = hitTransform.name + "/" + path;
+            }
+
+            Debug.Log(
+                $"Hit by {collision.collider.GetType().Name} at {path} | " +
+                $"isTrigger={collision.collider.isTrigger} | " +
+                $"rigidbody={(collision.rigidbody != null ? collision.rigidbody.name : "none")}",
+                collision.collider);
+        }
 
         ControllerVelocity velocity =
             collision.collider.GetComponentInParent<ControllerVelocity>();
 
         if (velocity == null)
         {
-            Debug.Log("No ControllerVelocity found on or above that collider");
+            if (debugLogs) Debug.Log("No ControllerVelocity found on or above that collider");
             return;
         }
 
         float controllerSpeed = velocity.Velocity.magnitude;
-        Debug.Log(controllerSpeed);
+        if (debugLogs) Debug.Log(controllerSpeed);
 
         if (controllerSpeed < minControllerSpeed)
             return;
@@ -278,13 +511,14 @@ public class FairyFloat : MonoBehaviour
             maxPush,
             t);
 
-        // Apply the impulse
-        rb.AddForce(direction * pushStrength, ForceMode.Impulse);
+        // Apply the impulse to the local velocity (same result as an Impulse force on the rigidbody)
+        localVelocity += direction * pushStrength / Mathf.Max(rb.mass, 0.0001f);
 
         // Limit maximum speed
-        if (rb.linearVelocity.magnitude > maxHitVelocity)
-            rb.linearVelocity = rb.linearVelocity.normalized * maxHitVelocity;
+        if (localVelocity.magnitude > maxHitVelocity)
+            localVelocity = localVelocity.normalized * maxHitVelocity;
 
         springTimer = ignoreSpringTime;
+        rampRate = 3f;
     }
 }
