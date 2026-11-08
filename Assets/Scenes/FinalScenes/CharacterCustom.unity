@@ -2072,7 +2072,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 116478110}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 477536429}
+        m_TargetAssemblyTypeName: HairSwitcher, Assembly-CSharp
+        m_MethodName: SelectHair
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!222 &237541247
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2905,6 +2917,7 @@ GameObject:
   - component: {fileID: 477536426}
   - component: {fileID: 477536425}
   - component: {fileID: 477536428}
+  - component: {fileID: 477536429}
   m_Layer: 0
   m_Name: ColourManager
   m_TagString: Untagged
@@ -2963,6 +2976,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fbd00b5ee630c04380ecf41794a128b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenderSwitcher
+--- !u!114 &477536429
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 477536424}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 748c756229f04874685ebc27dff4c85b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HairSwitcher
+  hairCount: 1
 --- !u!1 &536986821
 GameObject:
   m_ObjectHideFlags: 0
@@ -5915,7 +5941,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1222728158}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 477536429}
+        m_TargetAssemblyTypeName: HairSwitcher, Assembly-CSharp
+        m_MethodName: SelectHair
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 2
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!222 &1147754619
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6063,6 +6101,34 @@ PrefabInstance:
     - target: {fileID: 6150670977401591343, guid: fa5ef3b56cfeb4f4ba855cdf2610a578, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7753147258609537286, guid: fa5ef3b56cfeb4f4ba855cdf2610a578, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7753147258609537286, guid: fa5ef3b56cfeb4f4ba855cdf2610a578, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7753147258609537286, guid: fa5ef3b56cfeb4f4ba855cdf2610a578, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 477536429}
+    - target: {fileID: 7753147258609537286, guid: fa5ef3b56cfeb4f4ba855cdf2610a578, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7753147258609537286, guid: fa5ef3b56cfeb4f4ba855cdf2610a578, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SelectHair
+      objectReference: {fileID: 0}
+    - target: {fileID: 7753147258609537286, guid: fa5ef3b56cfeb4f4ba855cdf2610a578, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: HairSwitcher, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 7753147258609537286, guid: fa5ef3b56cfeb4f4ba855cdf2610a578, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 8781133472592516893, guid: fa5ef3b56cfeb4f4ba855cdf2610a578, type: 3}
       propertyPath: m_PokeFillMaxSizeX
@@ -8849,7 +8915,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 107283151}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 477536429}
+        m_TargetAssemblyTypeName: HairSwitcher, Assembly-CSharp
+        m_MethodName: SelectHair
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 3
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!222 &1470807875
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -9793,7 +9871,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1771335114}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 477536429}
+        m_TargetAssemblyTypeName: HairSwitcher, Assembly-CSharp
+        m_MethodName: SelectHair
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 5
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!222 &1759905554
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -11480,7 +11570,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2099614393}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 477536429}
+        m_TargetAssemblyTypeName: HairSwitcher, Assembly-CSharp
+        m_MethodName: SelectHair
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 4
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!222 &2013301725
 CanvasRenderer:
   m_ObjectHideFlags: 0
