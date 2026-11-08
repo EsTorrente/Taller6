@@ -22425,10 +22425,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -9098723253325319684, guid: b73b8dd89ff10344492c98a9595376d8, type: 3}
-      propertyPath: m_Name
-      value: Hair_boy3_kid
-      objectReference: {fileID: 0}
-    - target: {fileID: -9098723253325319684, guid: b73b8dd89ff10344492c98a9595376d8, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -22473,20 +22469,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -5818315811453885177, guid: b73b8dd89ff10344492c98a9595376d8, type: 3}
-      propertyPath: m_Name
-      value: Hair_girl1_kid
-      objectReference: {fileID: 0}
-    - target: {fileID: -5818315811453885177, guid: b73b8dd89ff10344492c98a9595376d8, type: 3}
       propertyPath: m_IsActive
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -5800320517223976501, guid: b73b8dd89ff10344492c98a9595376d8, type: 3}
-      propertyPath: m_Name
-      value: Hair_boy1_kid
-      objectReference: {fileID: 0}
-    - target: {fileID: -5060466940605508261, guid: b73b8dd89ff10344492c98a9595376d8, type: 3}
-      propertyPath: m_Name
-      value: Hair_girl3_kid
       objectReference: {fileID: 0}
     - target: {fileID: -5060466940605508261, guid: b73b8dd89ff10344492c98a9595376d8, type: 3}
       propertyPath: m_IsActive
@@ -22496,10 +22480,6 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: a25fc5cbf13d4754b80eed4a0fac802f, type: 2}
-    - target: {fileID: -748635509659798605, guid: b73b8dd89ff10344492c98a9595376d8, type: 3}
-      propertyPath: m_Name
-      value: Hair_girl2_kid
-      objectReference: {fileID: 0}
     - target: {fileID: -748635509659798605, guid: b73b8dd89ff10344492c98a9595376d8, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -22515,10 +22495,6 @@ PrefabInstance:
     - target: {fileID: 5866666021909216657, guid: b73b8dd89ff10344492c98a9595376d8, type: 3}
       propertyPath: m_CullingMode
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8903919739229839419, guid: b73b8dd89ff10344492c98a9595376d8, type: 3}
-      propertyPath: m_Name
-      value: Hair_boy2_kid
       objectReference: {fileID: 0}
     - target: {fileID: 8903919739229839419, guid: b73b8dd89ff10344492c98a9595376d8, type: 3}
       propertyPath: m_IsActive
@@ -57630,10 +57606,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8351470491298425564, guid: 87e73e27f5c48554abfd9b4b16b2a676, type: 3}
-      propertyPath: m_Name
-      value: Hair_boy2_kid
-      objectReference: {fileID: 0}
-    - target: {fileID: -8351470491298425564, guid: 87e73e27f5c48554abfd9b4b16b2a676, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -57650,40 +57622,20 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: a25fc5cbf13d4754b80eed4a0fac802f, type: 2}
     - target: {fileID: 3148533804288876033, guid: 87e73e27f5c48554abfd9b4b16b2a676, type: 3}
-      propertyPath: m_Name
-      value: Hair_girl3_kid
-      objectReference: {fileID: 0}
-    - target: {fileID: 3148533804288876033, guid: 87e73e27f5c48554abfd9b4b16b2a676, type: 3}
       propertyPath: m_IsActive
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3388932827527175844, guid: 87e73e27f5c48554abfd9b4b16b2a676, type: 3}
-      propertyPath: m_Name
-      value: Hair_boy1_kid
       objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: 87e73e27f5c48554abfd9b4b16b2a676, type: 3}
       propertyPath: m_CullingMode
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6221807395791050431, guid: 87e73e27f5c48554abfd9b4b16b2a676, type: 3}
-      propertyPath: m_Name
-      value: Hair_girl2_kid
-      objectReference: {fileID: 0}
-    - target: {fileID: 6221807395791050431, guid: 87e73e27f5c48554abfd9b4b16b2a676, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7494163185309758408, guid: 87e73e27f5c48554abfd9b4b16b2a676, type: 3}
-      propertyPath: m_Name
-      value: Hair_boy3_kid
-      objectReference: {fileID: 0}
-    - target: {fileID: 7494163185309758408, guid: 87e73e27f5c48554abfd9b4b16b2a676, type: 3}
       propertyPath: m_IsActive
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8475182927738391971, guid: 87e73e27f5c48554abfd9b4b16b2a676, type: 3}
-      propertyPath: m_Name
-      value: Hair_girl1_kid
       objectReference: {fileID: 0}
     - target: {fileID: 8475182927738391971, guid: 87e73e27f5c48554abfd9b4b16b2a676, type: 3}
       propertyPath: m_IsActive
@@ -252014,10 +251966,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8351470491298425564, guid: 616c5f91b9436d04992428e5f6651a83, type: 3}
-      propertyPath: m_Name
-      value: Hair_boy2_kid
-      objectReference: {fileID: 0}
-    - target: {fileID: -8351470491298425564, guid: 616c5f91b9436d04992428e5f6651a83, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -252034,40 +251982,20 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: a25fc5cbf13d4754b80eed4a0fac802f, type: 2}
     - target: {fileID: 3148533804288876033, guid: 616c5f91b9436d04992428e5f6651a83, type: 3}
-      propertyPath: m_Name
-      value: Hair_girl3_kid
-      objectReference: {fileID: 0}
-    - target: {fileID: 3148533804288876033, guid: 616c5f91b9436d04992428e5f6651a83, type: 3}
       propertyPath: m_IsActive
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3388932827527175844, guid: 616c5f91b9436d04992428e5f6651a83, type: 3}
-      propertyPath: m_Name
-      value: Hair_boy1_kid
       objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: 616c5f91b9436d04992428e5f6651a83, type: 3}
       propertyPath: m_CullingMode
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6221807395791050431, guid: 616c5f91b9436d04992428e5f6651a83, type: 3}
-      propertyPath: m_Name
-      value: Hair_girl2_kid
-      objectReference: {fileID: 0}
-    - target: {fileID: 6221807395791050431, guid: 616c5f91b9436d04992428e5f6651a83, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7494163185309758408, guid: 616c5f91b9436d04992428e5f6651a83, type: 3}
-      propertyPath: m_Name
-      value: Hair_boy3_kid
-      objectReference: {fileID: 0}
-    - target: {fileID: 7494163185309758408, guid: 616c5f91b9436d04992428e5f6651a83, type: 3}
       propertyPath: m_IsActive
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8475182927738391971, guid: 616c5f91b9436d04992428e5f6651a83, type: 3}
-      propertyPath: m_Name
-      value: Hair_girl1_kid
       objectReference: {fileID: 0}
     - target: {fileID: 8475182927738391971, guid: 616c5f91b9436d04992428e5f6651a83, type: 3}
       propertyPath: m_IsActive
@@ -252172,7 +252100,6 @@ GameObject:
   - component: {fileID: 2071768765}
   - component: {fileID: 2071768764}
   - component: {fileID: 2071768763}
-  - component: {fileID: 2071768767}
   - component: {fileID: 2071768766}
   m_Layer: 0
   m_Name: MainManager
@@ -252343,27 +252270,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &2071768767
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2071768762}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60e6fc2eab515db408e72c2e6c7de177, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CinematicHairApplier
-  hairMeshNames:
-  - Hair_boy1_kid
-  - Hair_boy2_kid
-  - Hair_boy3_kid
-  - Hair_girl1_kid
-  - Hair_girl2_kid
-  - Hair_girl3_kid
-  prefabRoots: []
-  reapplyEveryFrame: 0
 --- !u!1 &2071884670
 GameObject:
   m_ObjectHideFlags: 0
