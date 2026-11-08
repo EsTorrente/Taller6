@@ -30312,7 +30312,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 302379803}
+  - component: {fileID: 302379804}
   - component: {fileID: 302379802}
+  - component: {fileID: 302379805}
   m_Layer: 0
   m_Name: == E2_Director ==
   m_TagString: Untagged
@@ -30409,6 +30411,58 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &302379804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 302379801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2bb50d1fb32dae4e98c857d04dd9ec1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkyboxChange
+  skybox: {fileID: 2100000, guid: 8dcb7c4b5a596e44788d4fb0ba8bb656, type: 2}
+  useDefaultSkybox: 0
+  setFog: 1
+  fogOn: 1
+--- !u!328 &302379805
+VideoPlayer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 302379801}
+  m_Enabled: 1
+  m_VideoClip: {fileID: 0}
+  m_TargetCameraAlpha: 1
+  m_TargetCamera3DLayout: 0
+  m_TargetCamera: {fileID: 0}
+  m_TargetTexture: {fileID: 8400000, guid: 5611d61439a0a3145a0946b69c4ee84c, type: 2}
+  m_TimeReference: 0
+  m_TargetMaterialRenderer: {fileID: 0}
+  m_TargetMaterialProperty: <noninit>
+  m_RenderMode: 2
+  m_AspectRatio: 2
+  m_DataSource: 0
+  m_TimeUpdateMode: 2
+  m_PlaybackSpeed: 1
+  m_AudioOutputMode: 0
+  m_TargetAudioSources:
+  - {fileID: 0}
+  m_DirectAudioVolumes:
+  - 1
+  m_Url: 
+  m_EnabledAudioTracks: 01
+  m_DirectAudioMutes: 00
+  m_ControlledAudioTrackCount: 1
+  m_PlayOnAwake: 1
+  m_SkipOnDrop: 1
+  m_Looping: 0
+  m_WaitForFirstFrame: 1
+  m_FrameReadyEventEnabled: 0
+  m_VideoShaders: []
 --- !u!1 &302998286
 GameObject:
   m_ObjectHideFlags: 0
@@ -138838,6 +138892,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1265982970}
+  - component: {fileID: 1265982971}
   - component: {fileID: 1265982969}
   - component: {fileID: 1265982968}
   - component: {fileID: 1265982967}
@@ -139184,6 +139239,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1265982971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1265982965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2bb50d1fb32dae4e98c857d04dd9ec1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkyboxChange
+  skybox: {fileID: 2100000, guid: 0cf0096a70664224598e947718411ca4, type: 2}
+  useDefaultSkybox: 0
+  setFog: 1
+  fogOn: 0
 --- !u!1 &1266187432
 GameObject:
   m_ObjectHideFlags: 0
@@ -147996,6 +148067,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1307289533}
+  - component: {fileID: 1307289534}
   - component: {fileID: 1307289532}
   - component: {fileID: 1307289531}
   - component: {fileID: 1307289530}
@@ -148302,6 +148374,16 @@ PlayableDirector:
     value: {fileID: 580461398}
   - key: {fileID: -2040889639833619923, guid: 7a3f3d43d9d47f54f8511a84aff6a4b9, type: 2}
     value: {fileID: 1279593501}
+  - key: {fileID: -338585968385080511, guid: 7a3f3d43d9d47f54f8511a84aff6a4b9, type: 2}
+    value: {fileID: 0}
+  - key: {fileID: -7743543900653031775, guid: 7a3f3d43d9d47f54f8511a84aff6a4b9, type: 2}
+    value: {fileID: 0}
+  - key: {fileID: 6298809280761324512, guid: 7a3f3d43d9d47f54f8511a84aff6a4b9, type: 2}
+    value: {fileID: 0}
+  - key: {fileID: 8510206396733719246, guid: 7a3f3d43d9d47f54f8511a84aff6a4b9, type: 2}
+    value: {fileID: 0}
+  - key: {fileID: 6408752271906145048, guid: 7a3f3d43d9d47f54f8511a84aff6a4b9, type: 2}
+    value: {fileID: 0}
   m_ExposedReferences:
     m_References:
     - 3de904898fe7e374d975e159af6b1385: {fileID: 1629353615}
@@ -148320,6 +148402,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1307289534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1307289528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2bb50d1fb32dae4e98c857d04dd9ec1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkyboxChange
+  skybox: {fileID: 2100000, guid: 0cf0096a70664224598e947718411ca4, type: 2}
+  useDefaultSkybox: 0
+  setFog: 1
+  fogOn: 0
 --- !u!1 &1307708911
 GameObject:
   m_ObjectHideFlags: 0
@@ -190581,7 +190679,7 @@ VFXRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1601410914}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -208033,6 +208131,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1772793785}
+  - component: {fileID: 1772793786}
   - component: {fileID: 1772793784}
   m_Layer: 0
   m_Name: == E1_Director ==
@@ -208124,6 +208223,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1772793786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1772793783}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2bb50d1fb32dae4e98c857d04dd9ec1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkyboxChange
+  skybox: {fileID: 0}
+  useDefaultSkybox: 1
+  setFog: 1
+  fogOn: 1
 --- !u!1 &1772813422
 GameObject:
   m_ObjectHideFlags: 0
@@ -219108,7 +219223,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1831717821}
+  - component: {fileID: 1831717822}
   - component: {fileID: 1831717820}
+  - component: {fileID: 1831717823}
   m_Layer: 0
   m_Name: == E4_Director ==
   m_TagString: Untagged
@@ -219158,6 +219275,58 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1831717822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1831717819}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2bb50d1fb32dae4e98c857d04dd9ec1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkyboxChange
+  skybox: {fileID: 2100000, guid: ac528d3bf8a27e0499dfe2b31577de3f, type: 2}
+  useDefaultSkybox: 0
+  setFog: 1
+  fogOn: 1
+--- !u!328 &1831717823
+VideoPlayer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1831717819}
+  m_Enabled: 1
+  m_VideoClip: {fileID: 0}
+  m_TargetCameraAlpha: 1
+  m_TargetCamera3DLayout: 0
+  m_TargetCamera: {fileID: 0}
+  m_TargetTexture: {fileID: 8400000, guid: 91413ab8e529e3047b5a6c8a8b7343f4, type: 2}
+  m_TimeReference: 0
+  m_TargetMaterialRenderer: {fileID: 0}
+  m_TargetMaterialProperty: <noninit>
+  m_RenderMode: 2
+  m_AspectRatio: 2
+  m_DataSource: 0
+  m_TimeUpdateMode: 2
+  m_PlaybackSpeed: 1
+  m_AudioOutputMode: 0
+  m_TargetAudioSources:
+  - {fileID: 0}
+  m_DirectAudioVolumes:
+  - 1
+  m_Url: 
+  m_EnabledAudioTracks: 01
+  m_DirectAudioMutes: 00
+  m_ControlledAudioTrackCount: 1
+  m_PlayOnAwake: 1
+  m_SkipOnDrop: 1
+  m_Looping: 0
+  m_WaitForFirstFrame: 1
+  m_FrameReadyEventEnabled: 0
+  m_VideoShaders: []
 --- !u!1 &1831730961
 GameObject:
   m_ObjectHideFlags: 0
