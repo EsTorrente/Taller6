@@ -287,6 +287,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79d4accf3c05c4848b1b026c47031107, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FairyFloat
+  movementMode: 0
+  orbitTarget: {fileID: 0}
+  orbitRadius: 0.5
+  orbitSpeed: 60
+  orbitAxis: {x: 0, y: 1, z: 0}
+  useTargetLocalAxis: 0
+  orbitHeightOffset: 0
+  followSmoothTime: 0.2
   floatHeight: 0.12
   floatSpeed: 1.2
   swayAmount: 0.08
@@ -1694,7 +1702,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &107284639
 Transform:
   m_ObjectHideFlags: 0
@@ -1794,6 +1802,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79d4accf3c05c4848b1b026c47031107, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FairyFloat
+  movementMode: 0
+  orbitTarget: {fileID: 0}
+  orbitRadius: 0.5
+  orbitSpeed: 60
+  orbitAxis: {x: 0, y: 1, z: 0}
+  useTargetLocalAxis: 0
+  orbitHeightOffset: 0
+  followSmoothTime: 0.2
   floatHeight: 0.12
   floatSpeed: 1.2
   swayAmount: 0.08
@@ -11401,7 +11417,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8135023674665499069, guid: 58d0a4ac86f2348deb02f3880c71378e, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8518324294302271954, guid: 58d0a4ac86f2348deb02f3880c71378e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -12018,7 +12034,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &713638105
 Transform:
   m_ObjectHideFlags: 0
@@ -17803,7 +17819,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!95 &845245544
 Animator:
   serializedVersion: 7
@@ -18847,6 +18863,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79d4accf3c05c4848b1b026c47031107, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FairyFloat
+  movementMode: 0
+  orbitTarget: {fileID: 0}
+  orbitRadius: 0.5
+  orbitSpeed: 60
+  orbitAxis: {x: 0, y: 1, z: 0}
+  useTargetLocalAxis: 0
+  orbitHeightOffset: 0
+  followSmoothTime: 0.2
   floatHeight: 0.12
   floatSpeed: 1.2
   swayAmount: 0.08
@@ -20473,6 +20497,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79d4accf3c05c4848b1b026c47031107, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FairyFloat
+  movementMode: 0
+  orbitTarget: {fileID: 0}
+  orbitRadius: 0.5
+  orbitSpeed: 60
+  orbitAxis: {x: 0, y: 1, z: 0}
+  useTargetLocalAxis: 0
+  orbitHeightOffset: 0
+  followSmoothTime: 0.2
   floatHeight: 0.12
   floatSpeed: 1.2
   swayAmount: 0.08
@@ -28603,7 +28635,7 @@ Transform:
   m_GameObject: {fileID: 1365285426}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.72192, y: 1.47376, z: -11.21096}
+  m_LocalPosition: {x: 0, y: 0.009240031, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -34709,6 +34741,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79d4accf3c05c4848b1b026c47031107, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FairyFloat
+  movementMode: 0
+  orbitTarget: {fileID: 0}
+  orbitRadius: 0.5
+  orbitSpeed: 60
+  orbitAxis: {x: 0, y: 1, z: 0}
+  useTargetLocalAxis: 0
+  orbitHeightOffset: 0
+  followSmoothTime: 0.2
   floatHeight: 0.12
   floatSpeed: 1.2
   swayAmount: 0.08
@@ -45984,6 +46024,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79d4accf3c05c4848b1b026c47031107, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FairyFloat
+  movementMode: 0
+  orbitTarget: {fileID: 0}
+  orbitRadius: 0.5
+  orbitSpeed: 60
+  orbitAxis: {x: 0, y: 1, z: 0}
+  useTargetLocalAxis: 0
+  orbitHeightOffset: 0
+  followSmoothTime: 0.2
   floatHeight: 0.12
   floatSpeed: 1.2
   swayAmount: 0.08
@@ -47175,11 +47223,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 2ed803c31591439428f176a20f57c390, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0.017
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2ed803c31591439428f176a20f57c390, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.003
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2ed803c31591439428f176a20f57c390, type: 3}
       propertyPath: m_LocalPosition.z
@@ -47191,15 +47239,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2ed803c31591439428f176a20f57c390, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2ed803c31591439428f176a20f57c390, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2ed803c31591439428f176a20f57c390, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2ed803c31591439428f176a20f57c390, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
