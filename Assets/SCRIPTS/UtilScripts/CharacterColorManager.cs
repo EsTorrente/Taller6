@@ -162,7 +162,7 @@ public class CharacterColorManager : MonoBehaviour
 
 
             if (material.shader != null &&
-                material.shader.name == "Custom/CharacterRecolorToon")
+                (material.shader.name == "Custom/CharacterRecolorToon" || material.shader.name == "ESCENA67/KidMagic" || material.shader.name == "ESCENA67/KidMagicTransparent" || material.shader.name == "Custom/EyesRecolourToon"))
             {
                 hasCharacterShader = true;
                 break;
@@ -179,7 +179,11 @@ public class CharacterColorManager : MonoBehaviour
         // APPLY COLORS
         // =====================================================
 
-        propertyBlock.Clear();
+        // A renderer only has ONE property block, and SetPropertyBlock replaces it.
+        // Read the current one first so values set by other scripts
+        // (e.g. MagicDissolveDriver's per-kid Mapping Location) are kept,
+        // instead of clearing them.
+        renderer.GetPropertyBlock(propertyBlock);
 
         propertyBlock.SetColor(
             HairColorID,

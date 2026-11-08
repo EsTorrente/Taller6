@@ -2823,7 +2823,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 477536425}
         m_TargetAssemblyTypeName: CharacterColorUI, Assembly-CSharp
-        m_MethodName: SelectSkinBlack
+        m_MethodName: SelectHairBlack
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
