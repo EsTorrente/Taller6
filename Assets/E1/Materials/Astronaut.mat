@@ -38,7 +38,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: 1ceb70e3de012a04bb04dcd665c63539, type: 3}
+        m_Texture: {fileID: 2800000, guid: ddf1d6db0b6b80843988fc5bd5e80325, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -66,7 +66,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MaskMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: fb2916c283ba39645bb21aa350345fe2, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -124,7 +124,7 @@ Material:
     - _Glossiness: 0.53877544
     - _GlossyReflections: 1
     - _HairStrength: 0.922
-    - _LightIntensity: 1.69
+    - _LightIntensity: 1.16
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
@@ -133,17 +133,17 @@ Material:
     - _ReceiveShadows: 1
     - _RimIntensity: 0.4
     - _RimLightInfluence: 1
-    - _RimLightOffset: -0.63
+    - _RimLightOffset: 0.34
     - _RimLightSource: 1
     - _RimMode: 2
     - _RimPower: 6.33
     - _RimShadowBias: 0.03
     - _RimShadowMask: 1
-    - _RimSoftness: 0.408
+    - _RimSoftness: 0.29
     - _RimThreshold: 0.381
     - _ShadowLightInfluence: 0
-    - _ShadowSoftness: 0.077
-    - _ShadowThreshold: 0.55
+    - _ShadowSoftness: 0.178
+    - _ShadowThreshold: 0.395
     - _SkinStrength: 0.925
     - _Smoothness: 0.53877544
     - _SmoothnessTextureChannel: 0

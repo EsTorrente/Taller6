@@ -116,7 +116,7 @@ Material:
     - _FootShadowEnd: 2.42
     - _FootShadowSpace: 1
     - _FootShadowStart: 0
-    - _FootShadowStrength: 0.57
+    - _FootShadowStrength: 0.923
     - _GlossMapScale: 1
     - _Glossiness: 0.059090912
     - _GlossyReflections: 1
