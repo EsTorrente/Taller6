@@ -3,6 +3,33 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class FairyFloat : MonoBehaviour
 {
+    public enum MovementMode
+    {
+        FloatInPlace,
+        OrbitObject
+    }
+
+    [Header("Movement Mode")]
+    [Tooltip("Float in place, or orbit around a chosen object while floating.")]
+    public MovementMode movementMode = MovementMode.FloatInPlace;
+
+    [Header("Orbit (only used in Orbit Object mode)")]
+    [Tooltip("The object to orbit around.")]
+    public Transform orbitTarget;
+    [Tooltip("Distance from the target.")]
+    public float orbitRadius = 0.5f;
+    [Tooltip("Degrees per second. Negative values orbit the other way.")]
+    public float orbitSpeed = 60f;
+    [Tooltip("Axis to orbit around (in the target's local space if 'Use Target Local Axis' is on).")]
+    public Vector3 orbitAxis = Vector3.up;
+    public bool useTargetLocalAxis = false;
+    [Tooltip("Extra height offset above the target's position.")]
+    public float orbitHeightOffset = 0f;
+
+    [Header("Follow Smoothing (Orbit mode)")]
+    [Tooltip("How smoothly the orbit center follows the target. Higher = smoother but more lag. 0 = no smoothing.")]
+    public float followSmoothTime = 0.2f;
+
     [Header("Floating")]
     public float floatHeight = 0.12f;
     public float floatSpeed = 1.2f;
@@ -42,6 +69,17 @@ public class FairyFloat : MonoBehaviour
     Vector3 startPosition;
     float randomOffset;
 
+    float orbitAngle; // current angle in degrees
+
+    // Smoothed orbit center (so jerky target movement doesn't jerk the fairy)
+    Vector3 smoothedCenter;
+    Vector3 centerVelocity;
+
+    // For feed-forward damping (fairy damps against the target's velocity, not zero)
+    Vector3 lastTargetPos;
+    Vector3 targetVelocity;
+    bool hasLastTarget;
+
     float springWeight = 1f;
     float springTimer;
 
@@ -54,17 +92,98 @@ public class FairyFloat : MonoBehaviour
 
         rb.useGravity = false;
         rb.freezeRotation = true; // hits shouldn't spin it
+
+        // Smooths the visual movement between physics steps (fixes stepping/jitter)
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
+
+        if (orbitTarget != null)
+            smoothedCenter = orbitTarget.position;
+
+        InitOrbitAngle();
+    }
+
+    // Start the orbit from wherever the fairy currently is, so it doesn't snap.
+    void InitOrbitAngle()
+    {
+        if (orbitTarget == null) return;
+
+        Vector3 axis = GetOrbitAxis();
+        Vector3 offset = Vector3.ProjectOnPlane(transform.position - orbitTarget.position, axis);
+
+        if (offset.sqrMagnitude < 0.0001f)
+        {
+            orbitAngle = 0f;
+            return;
+        }
+
+        Vector3 reference = GetOrbitReference(axis);
+        orbitAngle = Vector3.SignedAngle(reference, offset, axis);
+    }
+
+    Vector3 GetOrbitAxis()
+    {
+        Vector3 axis = orbitAxis.sqrMagnitude < 0.0001f ? Vector3.up : orbitAxis.normalized;
+        if (useTargetLocalAxis && orbitTarget != null)
+            axis = orbitTarget.TransformDirection(axis);
+        return axis.normalized;
+    }
+
+    // A stable vector perpendicular to the axis, used as angle 0.
+    Vector3 GetOrbitReference(Vector3 axis)
+    {
+        Vector3 reference = Vector3.Cross(axis, Vector3.up);
+        if (reference.sqrMagnitude < 0.0001f)
+            reference = Vector3.Cross(axis, Vector3.right);
+        return reference.normalized;
+    }
+
+    Vector3 GetBasePosition()
+    {
+        if (movementMode == MovementMode.OrbitObject && orbitTarget != null)
+        {
+            Vector3 axis = GetOrbitAxis();
+            Vector3 reference = GetOrbitReference(axis);
+            Vector3 radial = Quaternion.AngleAxis(orbitAngle, axis) * reference;
+
+            return smoothedCenter
+                   + radial * orbitRadius
+                   + axis * orbitHeightOffset;
+        }
+
+        return startPosition;
     }
 
     void FixedUpdate()
     {
         float t = Time.time + randomOffset;
 
+        bool orbiting = movementMode == MovementMode.OrbitObject && orbitTarget != null;
+
+        if (orbiting)
+        {
+            orbitAngle = Mathf.Repeat(orbitAngle + orbitSpeed * Time.fixedDeltaTime, 360f);
+
+            if (followSmoothTime > 0.0001f)
+                smoothedCenter = Vector3.SmoothDamp(
+                    smoothedCenter, orbitTarget.position, ref centerVelocity,
+                    followSmoothTime, Mathf.Infinity, Time.fixedDeltaTime);
+            else
+                smoothedCenter = orbitTarget.position;
+        }
+
         Vector3 target =
-            startPosition +
+            GetBasePosition() +
             Vector3.up * Mathf.Sin(t * floatSpeed) * floatHeight +
             Vector3.right * Mathf.Sin(t * swaySpeed) * swayAmount +
             Vector3.forward * Mathf.Cos(t * swaySpeed * 0.8f) * swayAmount;
+
+        // Velocity of the moving target, so the fairy matches it instead of lagging behind
+        if (hasLastTarget && Time.fixedDeltaTime > 0f)
+            targetVelocity = (target - lastTargetPos) / Time.fixedDeltaTime;
+        else
+            targetVelocity = Vector3.zero;
+        lastTargetPos = target;
+        hasLastTarget = true;
 
         // Delay the spring after being hit
         if (springTimer > 0)
@@ -79,7 +198,11 @@ public class FairyFloat : MonoBehaviour
 
         Vector3 force = (target - rb.position) * returnForce * springWeight;
 
-        rb.AddForce(force - rb.linearVelocity * damping * springWeight, ForceMode.Acceleration);
+        // In orbit mode, damp relative to the target's motion so it follows smoothly
+        Vector3 referenceVelocity = orbiting ? targetVelocity : Vector3.zero;
+        Vector3 dampingForce = (rb.linearVelocity - referenceVelocity) * damping * springWeight;
+
+        rb.AddForce(force - dampingForce, ForceMode.Acceleration);
     }
 
     void LateUpdate()
