@@ -12514,6 +12514,18 @@ Transform:
   - {fileID: 1108749852}
   m_Father: {fileID: 880589147}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114881731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 985747133}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99b1bf8521054836ac950a4dd6b07d43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VideoPreload
 --- !u!1 &115676790
 GameObject:
   m_ObjectHideFlags: 0
@@ -255561,6 +255573,26 @@ Transform:
   m_Children: []
   m_Father: {fileID: 613688367}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2044240977
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2071768762}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89ad44bc004037a42a5b399f1dfb8b20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CinematicVoiceApplier
+  director: {fileID: 558677971}
+  audioTrackName: Voice Others
+  voiceLines:
+  - maleEnglish: {fileID: 8300000, guid: c4663c3d27804d58a8d8a1dd3e6d4d23, type: 3}
+    femaleEnglish: {fileID: 8300000, guid: e4aa8a3cae1341438aee0d1b0a68910f, type: 3}
+    maleSpanish: {fileID: 8300000, guid: 500240a9b3b24b3e957af4c1dfa08527, type: 3}
+    femaleSpanish: {fileID: 8300000, guid: 639b634e06ff4908a8a7b6087013b8ef, type: 3}
+  playDirectorAfterApply: 0
 --- !u!1 &2044264259
 GameObject:
   m_ObjectHideFlags: 0
@@ -258824,7 +258856,7 @@ MonoBehaviour:
   - maleEnglish: {fileID: 8300000, guid: 0d82cdaaa62448c5ace4aa2c19463cb8, type: 3}
     femaleEnglish: {fileID: 8300000, guid: ad2dce08c8b3425eb61ee8301346ae98, type: 3}
     maleSpanish: {fileID: 8300000, guid: 91845f3b167645f382a3a95423afe0c3, type: 3}
-    femaleSpanish: {fileID: 8300000, guid: bfe4746bf8a641bbaf0361960a8b1b4f, type: 3}
+    femaleSpanish: {fileID: 8300000, guid: 732fa8b641fac2c43aa368ba90ee6365, type: 3}
   playDirectorAfterApply: 0
 --- !u!114 &2071768768
 MonoBehaviour:
@@ -266039,38 +266071,6 @@ Transform:
   - {fileID: 379351843}
   m_Father: {fileID: 1938202477}
   m_LocalEulerAnglesHint: {x: 82.18455, y: -179.9999, z: -179.9999}
---- !u!114 &114881731
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 985747133}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 99b1bf8521054836ac950a4dd6b07d43, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::VideoPreload
---- !u!114 &2044240977
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2071768762}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89ad44bc004037a42a5b399f1dfb8b20, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CinematicVoiceApplier
-  director: {fileID: 558677971}
-  audioTrackName: Voice Others
-  voiceLines:
-  - maleEnglish: {fileID: 8300000, guid: c4663c3d27804d58a8d8a1dd3e6d4d23, type: 3}
-    femaleEnglish: {fileID: 8300000, guid: e4aa8a3cae1341438aee0d1b0a68910f, type: 3}
-    maleSpanish: {fileID: 8300000, guid: 500240a9b3b24b3e957af4c1dfa08527, type: 3}
-    femaleSpanish: {fileID: 8300000, guid: 639b634e06ff4908a8a7b6087013b8ef, type: 3}
-  playDirectorAfterApply: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
