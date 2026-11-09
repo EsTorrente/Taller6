@@ -25,7 +25,8 @@ namespace Klak.Timeline
 
         public override void ProcessFrame(Playable playable, FrameData info, object playerData)
         {
-            if (clip != null) PlayClip((float)playable.GetTime());
+            // Edit-mode scrubbing only: in Play mode the real Audio Track already plays the song
+            if (clip != null && !Application.isPlaying) PlayClip((float)playable.GetTime());
         }
 
         #endregion
@@ -34,14 +35,19 @@ namespace Klak.Timeline
 
         const float kMaxGap = 1.0f / 15;
 
+        // Unity 2020.2+ names (the old GetClipPosition/PlayClip/StopAllClips no longer exist)
+        static readonly Type kAudioUtil = Type.GetType("UnityEditor.AudioUtil,UnityEditor");
+        static readonly MethodInfo kGetPosition = kAudioUtil.GetMethod("GetPreviewClipPosition", Type.EmptyTypes);
+        static readonly MethodInfo kPlay = kAudioUtil.GetMethod("PlayPreviewClip", new [] { typeof(AudioClip), typeof(int), typeof(bool) });
+        static readonly MethodInfo kSetPosition = kAudioUtil.GetMethod("SetPreviewClipSamplePosition", new [] { typeof(AudioClip), typeof(int) });
+        static readonly MethodInfo kStopAll = kAudioUtil.GetMethod("StopAllPreviewClips", Type.EmptyTypes);
+
         float _lastUpdateTime;
         bool _played;
 
         float GetClipPosition()
         {
-            var type = Type.GetType("UnityEditor.AudioUtil,UnityEditor");
-            var func = type.GetMethod("GetClipPosition", new [] { typeof(AudioClip) });
-            return (float)func.Invoke(null, new System.Object [] { clip });
+            return (float)kGetPosition.Invoke(null, null);
         }
 
         void CheckPosition()
@@ -57,12 +63,8 @@ namespace Klak.Timeline
             {
                 StopClip();
 
-                var type = Type.GetType("UnityEditor.AudioUtil,UnityEditor");
-                var func = type.GetMethod("PlayClip", new [] { typeof(AudioClip), typeof(int), typeof(bool) });
-                func.Invoke(null, new System.Object [] { clip, 0, false });
-
-                func = type.GetMethod("SetClipSamplePosition", new[] { typeof(AudioClip), typeof(int) });
-                func.Invoke(null, new System.Object [] { clip, (int)(time * clip.frequency + 1) });
+                kPlay.Invoke(null, new System.Object [] { clip, 0, false });
+                kSetPosition.Invoke(null, new System.Object [] { clip, (int)(time * clip.frequency + 1) });
 
                 UnityEditor.EditorApplication.update += CheckPosition;
                 _played = true;
@@ -73,9 +75,7 @@ namespace Klak.Timeline
 
         void StopClip()
         {
-            var type = Type.GetType("UnityEditor.AudioUtil,UnityEditor");
-            var func = type.GetMethod("StopAllClips", BindingFlags.Public | BindingFlags.Static);
-            func.Invoke(null, null);
+            kStopAll.Invoke(null, null);
 
             if (!_played) return;
 

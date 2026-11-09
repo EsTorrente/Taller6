@@ -30518,7 +30518,7 @@ VideoPlayer:
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 0}
-  m_TargetTexture: {fileID: 8400000, guid: 5611d61439a0a3145a0946b69c4ee84c, type: 2}
+  m_TargetTexture: {fileID: 8400000, guid: ba89fa0f861c7364bbc0c465d488be51, type: 2}
   m_TimeReference: 0
   m_TargetMaterialRenderer: {fileID: 0}
   m_TargetMaterialProperty: <noninit>
@@ -61353,6 +61353,8 @@ PlayableDirector:
   m_DirectorUpdateMode: 1
   m_InitialTime: 0
   m_SceneBindings:
+  - key: {fileID: 7866948346398040989, guid: 430722259d112184e8a9adfece57d467, type: 2}
+    value: {fileID: 985747133}
   - key: {fileID: 7042456333899655686, guid: 430722259d112184e8a9adfece57d467, type: 2}
     value: {fileID: 1666632613}
   - key: {fileID: 3473712759935096079, guid: 430722259d112184e8a9adfece57d467, type: 2}
@@ -62810,7 +62812,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1011721409}
-  - {fileID: 985747135}
   - {fileID: 1595216007}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -107270,13 +107271,14 @@ GameObject:
   m_Component:
   - component: {fileID: 985747135}
   - component: {fileID: 985747134}
+  - component: {fileID: 114881731}
   m_Layer: 0
   m_Name: Video Skybox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!328 &985747134
 VideoPlayer:
   m_ObjectHideFlags: 0
@@ -107305,7 +107307,7 @@ VideoPlayer:
   m_EnabledAudioTracks: 
   m_DirectAudioMutes: 
   m_ControlledAudioTrackCount: 0
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_SkipOnDrop: 1
   m_Looping: 0
   m_WaitForFirstFrame: 1
@@ -107324,7 +107326,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 573416174}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &985939050
 GameObject:
@@ -199256,7 +199258,7 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 626218068}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: 8804eee6e3534066b33cdea6b8995d0e, type: 3}
+  m_VideoClip: {fileID: 32900000, guid: 7de5a856ecf2495d993822b4ba01cbce, type: 3}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 0}
@@ -266032,6 +266034,18 @@ Transform:
   - {fileID: 379351843}
   m_Father: {fileID: 1938202477}
   m_LocalEulerAnglesHint: {x: 82.18455, y: -179.9999, z: -179.9999}
+--- !u!114 &114881731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 985747133}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99b1bf8521054836ac950a4dd6b07d43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VideoPreload
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -266114,3 +266128,4 @@ SceneRoots:
   - {fileID: 2071676315}
   - {fileID: 692268553}
   - {fileID: 412922623}
+  - {fileID: 985747135}
