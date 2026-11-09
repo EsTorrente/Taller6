@@ -15,7 +15,8 @@ public class VideoTimelineSync : MonoBehaviour
         [Tooltip("Empty = plays from the start of the Timeline. Otherwise the video starts when this object is switched on")]
         public GameObject showWhile;
         [System.NonSerialized] public double start = -1;
-        [System.NonSerialized] public float seekedAt = -10;
+        [System.NonSerialized] public float nextCheck;   // next time (unscaled) this video needs looking at
+        [System.NonSerialized] public bool active;       // last frame: should be playing and was prepared
     }
 
     public PlayableDirector director;
@@ -29,6 +30,11 @@ public class VideoTimelineSync : MonoBehaviour
     [Tooltip("Master time at which this Timeline's time 0 falls (seconds)")]
     public double masterOffset;
 
+    // Drift is checked 10x per second instead of every frame (the tolerance is 0.15 s, so this is plenty).
+    const float CheckInterval = 0.1f;
+    // A seek takes a moment to land, so give it half a second before checking again.
+    const float SeekCooldown = 0.5f;
+
     bool started;
     float waited;
 
@@ -39,11 +45,14 @@ public class VideoTimelineSync : MonoBehaviour
         if (director.state == PlayState.Playing) director.Pause();
         director.time = 0;
         director.Evaluate();
-        foreach (var v in videos)
+
+        for (int i = 0; i < videos.Length; i++)
         {
-            v.player.playOnAwake = false;
-            v.player.Prepare();
-            if (v.player.targetTexture) ClearToBlack(v.player.targetTexture);
+            VideoPlayer p = videos[i].player;
+            if (!p) continue;
+            p.playOnAwake = false;
+            p.Prepare();
+            if (p.targetTexture) ClearToBlack(p.targetTexture);
         }
     }
 
@@ -53,7 +62,11 @@ public class VideoTimelineSync : MonoBehaviour
         {
             waited += Time.unscaledDeltaTime;
             bool ready = true;
-            foreach (var v in videos) ready &= v.player.isPrepared;
+            for (int i = 0; i < videos.Length; i++)
+            {
+                VideoPlayer p = videos[i].player;
+                if (p) ready &= p.isPrepared;
+            }
             if (!ready && waited < prepareTimeout) return;
             started = true;
             // also covers the time spent waiting for the videos, so the section doesn't fall behind the master's music
@@ -63,32 +76,70 @@ public class VideoTimelineSync : MonoBehaviour
 
         bool running = director.state == PlayState.Playing;
         double now = director.time;
-        foreach (var v in videos)
-        {
-            VideoPlayer p = v.player;
-            bool shown = !v.showWhile || v.showWhile.activeInHierarchy;
-            if (!shown) v.start = -1;
-            else if (v.start < 0) v.start = v.showWhile ? now : 0;
+        float t = Time.unscaledTime;
 
-            if (!shown || !running || !p.isPrepared)
+        for (int i = 0; i < videos.Length; i++)
+        {
+            Entry e = videos[i];
+            VideoPlayer p = e.player;
+            if (!p) continue;
+
+            bool shown = !e.showWhile || e.showWhile.activeInHierarchy;
+            if (!shown) e.start = -1;
+            else if (e.start < 0) e.start = e.showWhile ? now : 0;
+
+            bool wants = shown && running;
+
+            // Fast path: video is playing fine and nothing is due yet, so skip all VideoPlayer calls.
+            if (wants && e.active && t < e.nextCheck) continue;
+
+            bool canPlay = wants && p.isPrepared;
+
+            if (!canPlay)
             {
-                if (p.isPlaying) p.Pause();
+                if (e.active)
+                {
+                    // just stopped being active: pause right away
+                    e.active = false;
+                    if (p.isPlaying) p.Pause();
+                    e.nextCheck = t + CheckInterval;
+                }
+                else if (t >= e.nextCheck)
+                {
+                    // slow safety net so a paused video can't keep running by accident
+                    e.nextCheck = t + CheckInterval;
+                    if (p.isPlaying) p.Pause();
+                }
                 continue;
             }
 
-            // where the video should be: Timeline time since it started, at the player's speed
-            double target = (now - v.start) * p.playbackSpeed;
-            if (p.length > 0 && target >= p.length)
+            if (!e.active)
             {
-                if (!p.isLooping) { if (p.isPlaying) p.Pause(); continue; }
-                target %= p.length;
+                // just became active: check immediately so a resumed video is brought in step at once
+                e.active = true;
             }
+
+            e.nextCheck = t + CheckInterval;
+
+            // where the video should be: Timeline time since it started, at the player's speed
+            double target = (now - e.start) * p.playbackSpeed;
+            double length = p.length;
+            if (length > 0 && target >= length)
+            {
+                if (!p.isLooping)
+                {
+                    if (p.isPlaying) p.Pause();
+                    continue;
+                }
+                target %= length;
+            }
+
             if (!p.isPlaying) p.Play();
-            // a seek takes a moment to land, so give it half a second before checking again
-            if (Time.unscaledTime - v.seekedAt > 0.5f && System.Math.Abs(p.time - target) > maxDrift)
+
+            if (System.Math.Abs(p.time - target) > maxDrift && p.canSetTime)
             {
                 p.time = target;
-                v.seekedAt = Time.unscaledTime;
+                e.nextCheck = t + SeekCooldown;
             }
         }
     }

@@ -145,7 +145,7 @@ Material:
     - _GranuleScale: 9
     - _InnerEdgeWidth: 0
     - _LightIntensity: 1.6
-    - _Metallic: 0.724
+    - _Metallic: 1
     - _Mode: 0
     - _NoNormalMap: 0
     - _NoSpecular: 0
@@ -175,7 +175,7 @@ Material:
     - _ShadowStrength: 0.911
     - _ShadowThreshold: 0.574
     - _Shininess: 0
-    - _Smoothness: 0.507
+    - _Smoothness: 0.812
     - _SmoothnessSource: 0
     - _SmoothnessTextureChannel: 0
     - _SpecSource: 0

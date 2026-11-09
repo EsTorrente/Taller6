@@ -7,6 +7,7 @@ using UnityEngine.XR;
 /// <summary>
 /// Puts the player's HEAD at a chosen spot in the scene (regardless of their real height or
 /// where they stand in their room) and turns them to face a chosen direction.
+/// Only the head's yaw (left/right turn) is used: pitch and roll (tilting) are ignored.
 /// Put this on any object, assign the XR Origin and a spawn point, done.
 /// </summary>
 public class VRRecenter : MonoBehaviour
@@ -28,7 +29,7 @@ public class VRRecenter : MonoBehaviour
     [Tooltip("Also ask the XR runtime to recenter (same as the old script did).")]
     [SerializeField] private bool recenterRuntime = true;
 
-    [Tooltip("Rotate the player to face the spawn point's forward direction.")]
+    [Tooltip("Rotate the player to face the spawn point's forward direction (yaw only, head tilt is ignored).")]
     [SerializeField] private bool matchFacing = true;
 
     private void OnEnable()
@@ -81,17 +82,42 @@ public class VRRecenter : MonoBehaviour
             yield return null; // wait a frame so the new reference is used
         }
 
-        // 3. Rotate first (about the camera), THEN move, because rotating can shift the camera.
-        if (matchFacing)
+        // 3. Rotate (yaw only) around the camera, THEN move, because rotating can shift the camera.
+        if (matchFacing && xrOrigin.Camera != null)
         {
-            Vector3 flatForward = Vector3.ProjectOnPlane(spawnPoint.forward, Vector3.up);
-            if (flatForward.sqrMagnitude < 0.0001f)
-                flatForward = Vector3.forward;
+            Vector3 up = xrOrigin.Origin.transform.up;
 
-            xrOrigin.MatchOriginUpCameraForward(Vector3.up, flatForward.normalized);
+            // Where the spawn point wants the player to face, flattened onto the horizontal plane.
+            Vector3 desiredForward = Vector3.ProjectOnPlane(spawnPoint.forward, up);
+            if (desiredForward.sqrMagnitude < 0.0001f)
+                desiredForward = Vector3.ProjectOnPlane(Vector3.forward, up);
+
+            // Where the head is actually facing, ignoring pitch and roll.
+            Vector3 headForward = GetHeadYawForward(xrOrigin.Camera.transform, up);
+
+            float yawDelta = Vector3.SignedAngle(headForward, desiredForward, up);
+            xrOrigin.RotateAroundCameraUsingOriginUp(yawDelta);
         }
 
         // 4. Move the rig so the CAMERA (the player's head) ends up exactly on the spawn point.
         xrOrigin.MoveCameraToWorldLocation(spawnPoint.position);
+    }
+
+    /// <summary>
+    /// Returns the horizontal direction the head is facing, unaffected by tilting (pitch/roll).
+    /// </summary>
+    private static Vector3 GetHeadYawForward(Transform head, Vector3 up)
+    {
+        Vector3 flat = Vector3.ProjectOnPlane(head.forward, up);
+
+        // Looking almost straight up or down: forward is unreliable, so use the head's "up"
+        // direction instead (it points forward when looking down, backward when looking up).
+        if (flat.sqrMagnitude < 0.05f)
+        {
+            Vector3 alt = Vector3.ProjectOnPlane(head.up, up);
+            flat = Vector3.Dot(head.forward, up) < 0f ? alt : -alt;
+        }
+
+        return flat.normalized;
     }
 }
