@@ -17,6 +17,13 @@ public class CinematicGenderApplier : MonoBehaviour
     [Tooltip("Re-apply every frame (LateUpdate). Enable only if a Timeline/Animator keeps turning the meshes back on.")]
     public bool reapplyEveryFrame = false;
 
+    [Header("Book texture")]
+    [Tooltip("Book texture for Male. Materials using the other gender's texture are switched to this one.")]
+    public Texture maleBookTexture;
+
+    [Tooltip("Book texture for Female.")]
+    public Texture femaleBookTexture;
+
     HashSet<string> maleSet, femaleSet;
     readonly List<GameObject> maleObjects = new List<GameObject>();
     readonly List<GameObject> femaleObjects = new List<GameObject>();
@@ -50,9 +57,27 @@ public class CinematicGenderApplier : MonoBehaviour
         {
             if (maleSet.Contains(r.name)) maleObjects.Add(r.gameObject);
             else if (femaleSet.Contains(r.name)) femaleObjects.Add(r.gameObject);
+
+            SwapBookTexture(r);
         }
 
         SetStates();
+    }
+
+    void SwapBookTexture(Renderer r)
+    {
+        if (maleBookTexture == null || femaleBookTexture == null) return;
+        Texture wanted = male ? maleBookTexture : femaleBookTexture;
+        Texture other = male ? femaleBookTexture : maleBookTexture;
+
+        Material[] shared = r.sharedMaterials;
+        for (int i = 0; i < shared.Length; i++)
+        {
+            if (shared[i] == null) continue;
+            foreach (int id in shared[i].GetTexturePropertyNameIDs())
+                if (shared[i].GetTexture(id) == other)
+                    r.materials[i].SetTexture(id, wanted); // instance, so the .mat asset is never modified
+        }
     }
 
     void SetStates()

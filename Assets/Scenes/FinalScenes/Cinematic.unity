@@ -62361,7 +62361,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8135023674665499069, guid: 58d0a4ac86f2348deb02f3880c71378e, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8518324294302271954, guid: 58d0a4ac86f2348deb02f3880c71378e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -260677,6 +260677,8 @@ MonoBehaviour:
   - HairBack.002
   prefabRoots: []
   reapplyEveryFrame: 0
+  maleBookTexture: {fileID: 2800000, guid: c75f4bf052ec43b4e9d1568fff44dbc7, type: 3}
+  femaleBookTexture: {fileID: 2800000, guid: 2cce51e8b07c44acad4c2b0cb50b8bcb, type: 3}
 --- !u!114 &2071768764
 MonoBehaviour:
   m_ObjectHideFlags: 0
