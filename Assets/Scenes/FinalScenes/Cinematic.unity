@@ -62361,7 +62361,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8135023674665499069, guid: 58d0a4ac86f2348deb02f3880c71378e, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8518324294302271954, guid: 58d0a4ac86f2348deb02f3880c71378e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -260828,7 +260828,7 @@ MonoBehaviour:
   - maleEnglish: {fileID: 8300000, guid: 25f4137ba4cd4a88beaaf9d1dac8c964, type: 3}
     femaleEnglish: {fileID: 8300000, guid: 0ccda88ec8554921822ecb9252132130, type: 3}
     maleSpanish: {fileID: 8300000, guid: 91845f3b167645f382a3a95423afe0c3, type: 3}
-    femaleSpanish: {fileID: 8300000, guid: 3733fb820afc49b598642416da170ca1, type: 3}
+    femaleSpanish: {fileID: 8300000, guid: f01a3059c1bd3b540b8de1172e5a584c, type: 3}
   playDirectorAfterApply: 0
 --- !u!114 &2071768768
 MonoBehaviour:
